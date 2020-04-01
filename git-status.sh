@@ -18,7 +18,7 @@ gitCheck(){
 		then
 			mod=1
 			echo -en "\033[0;33m"
-			echo "Modified files    --> \033[33m${1}"
+			echo "Modified File(s)   --> \033[33m${1##*/}"
 			echo -en "\e[2m"
 		fi
 
@@ -26,21 +26,21 @@ gitCheck(){
 		then
 			mod=1
 			echo -en "\e[0;31m"
-			echo "Untracked files   --> \e[0;31m${1}"
+			echo "Untracked File(s)  --> \e[0;31m${1##*/}"
 		fi
 
 		if [ $(git status | grep 'Your branch is ahead' -c) -ne 0 ]
 		then
 			mod=1
 			echo -en "\033[0;32m"
-			echo "Unpushed commit   --> \033[0;32m${1}"
+			echo "Unpushed Commit(s) --> \033[0;32m${1##*/}"
 		fi
 
 		if [ $mod -eq 0 ]
 		then
 			echo -en "\e[37m"
 			echo -en "\e[2m"
-			echo "Nothing to commit --> ${1}"
+			echo "Nothing to Commit  --> ${1##*/}"
 		fi
 
 		cd ../
