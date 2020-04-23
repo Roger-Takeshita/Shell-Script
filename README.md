@@ -23,7 +23,18 @@
         * [Nano Editor](#nanoeditor)
         * [Vi Editor](#vieditor)
         * [Emacs Editor](#emacseditor)
-    * [Sorting](#sorting)
+    * [Sort - Sorting](#sorting)
+    * [Head/Tail - Head and Tail](#headtail)
+    * [WC - Couting words](#couting)
+    * [Grep - Search and Filter Text](#grep)
+    * [Find - Search for Files](#find)
+    * [Tr - Find and Replace Characters](#findreplace)
+    * [Advanced Tools](#advanced)
+    * [Column-based Data](#columnbase)
+  * [Jobs and Processes](#jobs)
+    * [Background Jobs](#background)
+    * [Killing Jobs and Process](#killingprogram)
+    * [Inspecting Processes](#inspectingprocesses)
 
 <h1 id='myscripts'>My Scripts</h1>
 
@@ -424,7 +435,7 @@
 * `F10` opens the menu
 * `f` to open the file menu to show the commands
 
-<h3 id='sorting'>Sorting</h3>
+<h3 id='sorting'>Sort - Sorting</h3>
 
 [Go Back to Summary](#summary)
 
@@ -466,3 +477,272 @@
 * Filter out repeted lines: `uniq`
   * `sort attendance | uniq`
   * `-c` counts lines
+
+<h3 id='headtail'>Head and Tail</h3>
+
+[Go Back to Summary](#summary)
+
+* Diplay the 10 largest files
+
+  ```Bash
+    ls -lS | head
+
+    # ls   -> list
+    # -l   -> long format
+    # S    -> Size
+    # |    -> pipe
+    # head -> 10 first results
+  ```
+* Diplay only one file
+
+  ```Bash
+    ls -lS | head -n 2
+
+    # ls   -> list
+    # -l   -> long format
+    # S    -> Size
+    # |    -> pipe
+    # head -> 10 first results
+    # -n 2 -> only one result (it's 2, because it alwyas print the total size)
+  ```
+
+* Diplay only one file
+
+  ```Bash
+    ls -lrS | tail -n 1
+
+    # ls   -> list
+    # -l   -> long format
+    # r    -> reverse
+    # S    -> Size
+    # |    -> pipe
+    # tail -> last 10 results
+    # -n 1 -> only one result
+  ```
+
+<h3 id='couting'>WC - Couting words</h3>
+
+[Go Back to Summary](#summary)
+
+* `ls | wc -l` count the number of files in the directory
+
+<h3 id='grep'>Grep - Search and Filter Text</h3>
+
+[Go Back to Summary](#summary)
+
+  | Key              | Meaning                               |
+  |------------------|---------------------------------------|
+  | grep string file | Searches for a text in a file         |
+  | grep string *    | Searches for a text in multiple files |
+  | -i               | makes search case-insensitive         |
+  | -c               | counts occurances                     |
+  | -l               | shows line number of occurance        |
+  | -v               | inverts the search (filter)           |
+
+* This commands returns all the lines in the `oscar` file that contains `Ring` with `R` uppercased
+
+  ```Bash
+    grep Rings oscar.csv
+  ```
+
+* Find all files that contain the name `steve`
+
+  ```Bash
+    grep steve *grades
+  ```
+
+* `-i` case insensitive
+* `-v` to filter out
+
+  ```Bash
+    grep -v lecture math_attendance | sort | uniq
+
+    # grep              -> find all
+    # -v lecture        -> filter out lecture
+    # math_attendance   -> file
+    # |                 -> pipe
+    # sort              -> sort
+    # uniq              -> unique values
+  ```
+
+* Another option is to use regex
+  * we have to add `E` to extend
+
+  ```Bash
+    grep -Ev "^$|lecture" math_attendance | sort | uniq
+
+    # grep              -> find all
+    # -E                -> to use regex
+    # -v                -> filter out
+    # "^$|lecture"      -> regex to match empty line or letcture
+    # math_attendance   -> file
+    # |                 -> pipe
+    # sort              -> sort
+    # uniq              -> unique values
+  ```
+
+* Used regex to display only directories
+
+  ```Bash
+    ls -l | grep "^d"
+  ```
+
+<h3 id='find'>Find - Search for Files</h3>
+
+[Go Back to Summary](#summary)
+
+* [Find - Wikipedia](https://en.wikipedia.org/wiki/Find_(Unix))
+
+* `find dir` - List all files in dir
+* `find dir -name f`
+  * Lists all files named `f` in dir
+  * Match expression:
+    * `find dir -name '*txt'`
+
+  ```Bash
+    find . -name '*txt' -exec grep -l curious {} \;
+
+    # find            -> find
+    # .               -> home directory
+    # -name           -> file name
+    # '*txt'          -> regex, contains *txt
+    # -exec           -> exec
+    # grep            -> search
+    # -l curious      -> line of ocurrances for word 'curious'
+    # {} \;           -> end of command
+  ```
+
+  * the command `grep -l curious` is executed replacing {} with the name of the file. The semicolon (backslashed to avoid the shell interpreting it as a command separator) indicates the end of the command.
+
+<h3 id='findreplace'>Tr - Find and Replace Characters</h3>
+
+[Go Back to Summary](#summary)
+
+```Bash
+  cat physics_grades | tr S s
+
+  # cat physics_grades  -> Get the file
+  # |                   -> pipe
+  # tr S s              -> replace uppercase S to lowercase s
+```
+
+* Another opiton is:
+
+  ```Bash
+    tr S s < physics_grades
+  ```
+
+* Changes column format of a file
+
+  ```Bash
+    grep \; oscar.tsv     # first check if the file has ; (\ is to escape)
+    tr \\t \; < oscar.tsv >oscars.csv
+
+    # tr            -> replace
+    # \\t           -> tabs, we have to use double \, because just tab is \t
+    # \;            -> escape ;, semicolon is a especial charcter for bash
+    # < oscar.tsv   -> from the input file .tsv
+    # > oscar.csv   -> save the output into a new file .csv
+  ```
+
+<h3 id='advanced'>Advanced Tools</h3>
+
+[Go Back to Summary](#summary)
+
+* `sed`
+  * Stream editor
+  * Transform text
+  * Replace words
+  * Most common use: to replace `old` with `new`
+
+```Bash
+  sed 's/curiouser/stranger/g' demo/alice > alice2
+
+  # s/curiouser/stranger/  -> replace text curiouser with stranger
+  # g                      -> replace every occurance in every line
+```
+
+* `awk
+  * Complete programming language
+  * Very useful for column-oriented files
+
+<h3 id='columnbase'>Column-based Data</h3>
+
+[Go Back to Summary](#summary)
+
+* Sort
+
+  ```Bash
+    sort -nk2 -t\; oscar.csv | tail
+
+    # sort          -> sort by
+    # -n            -> number
+    # k2            -> key (column) 2
+    # -t\;          -> type of separator, if we are using a something different from tab
+    # oscar.csv     -> file name
+    # |             -> pipe
+    # tail          -> show the last 10 oscars (sorted by year, column 2)
+  ```
+
+* Cut
+
+  ```Bash
+    cut -f 1,2 -d\;
+    # cut           -> show
+    # -f 1,2        -> which field to show column 1 and 2
+    # -d\;          -> the delimiter, if we don't specify anything bash uses tab
+  ```
+
+<h2 id='jobs'>Jobs and Processes</h2>
+
+<h3 id='background'>Background Jobs</h3>
+
+[Go Back to Summary](#summary)
+
+* only send jobs to the background that doesn't need user input
+* background jobs cannot read inputs
+  * if the program tries, bash will suspend it and let you know
+* Tip: After the job is done, bash will display on the screen
+  * Redirect the output to a file `find . > all_files &`
+* `^Z` -> Ctrl + Z stops the current job
+* `fg` -> resume the job
+* `bg` -> send the job to the background
+* `&`  -> adds to the background, we don't have to `^z` then `bg`
+
+<h3 id='killingprogram'>Killing Jobs and Process</h3>
+
+[Go Back to Summary](#summary)
+
+* Foreground program: `^c`
+* End any program with `kill`
+* Kill by job id:
+  * `kill %2` - kills the job id 2 in the current bash terminal
+  * `kill %cp` - kills the pid
+
+* `jobs` - list of jobs running
+* `ps -ax` - Show all the process id 
+
+* To filter for a specific program
+
+```Bash
+  ps ax | grep -i calc
+
+  # ps ax     -> Show all process id
+  # |         -> pipe
+  # grep      -> find
+  # -i        -> case-insensitive
+  # program
+```
+
+<h3 id='inspectingprocesses'>Inspecting Processes</h3>
+
+[Go Back to Summary](#summary)
+
+* `jobs`
+  * Shows bash jobs for current shell
+* `ps`
+  * Display all your processes running under a terminal
+  * `ps ax`
+    * Display all processes
+  * `ps aux`
+    * Display all processes including owner
