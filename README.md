@@ -71,6 +71,15 @@
     -   if you pass `-n` as the first argument, the script wont open the files after creating them
         -   `touch -n test/test.js test1/test1.js`
         -   My default editor is the VSCode
+    -   if you pass `+` between files, it will create the next file inside the previous folder (for now it's only working for 1 level of folder)
+        -   `touch test1.js test/test1.js + test2.js`
+            ```Bash
+              .
+              ├── test1.js
+              └── test
+                  ├── test1.js
+                  └── test2.js
+            ```
 
 <h1 id='bashshell'>Bash Shell</h1>
 
