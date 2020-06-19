@@ -1,82 +1,80 @@
-#!/bin/zsh
-
-dontOpen=0
-sameDir=0;
-previousDir=""
+#!/bin/bash
 
 if [ $# -eq 0 ]; then
     echo "\e[0;31mERROR:\e[37m I need a file" >&2
     return 1
 fi
 
-for fileName do
-    create=1
+red=$'\e[1;31m'
+grn=$'\e[1;32m'
+yel=$'\e[1;33m'
+blu=$'\e[1;34m'
+mag=$'\e[1;35m'
+cyn=$'\e[1;36m'
+end=$'\e[0m'
 
-    if [[ $fileName =~ (^-.+$) ]]; then
+previousDir=""
+shouldOpenFile=1;
+usePreviousDir=0
+
+for path in $@
+do
+    IFS='/' read -ra items <<< "$path"
+    dir=''
+
+    if [[ $path =~ (^-.+$) ]]; then
         # echo " ${fileName}"
 
-        if [ "$fileName" = "-n" ]; then
-            dontOpen=1
+        if [ "$path" = "-n" ]; then
+            shouldOpenFile=0;
         fi
-        
+
         continue
     fi
 
-    if [ $fileName = "+" ]; then
-        if [ "${previousDir}" = "" ]; then
-            sameDir=0
-        else
-            sameDir=1
-            dir=$previousDir
+    if [ $path = "+" ]; then
+        usePreviousDir=1
+    elif [ $usePreviousDir -eq 0 ]; then
+        dir=""
+        previousDir=""
+    fi 
+
+    for item in ${items[@]}
+    do
+        if [ $item = "+" ]; then
+            continue
         fi
 
-        continue
-    else
-        if [ $sameDir -eq 1 ]; then
-            dir="${previousDir}/${fileName}"
-        else
-            dir=$(dirname "${fileName}")
+        if [[ ${item%.*} == ${item##*.} ]]; then
+            if [ $usePreviousDir -eq 1 ]; then
+                dir="${previousDir}${item}/"
+            else
+                dir="${dir}${item}/"
+            fi
+
             previousDir=$dir
+
+
+            if [ ! -d "$dir" ]; then
+                mkdir -p "$dir"
+            fi
+        else 
+            file=$previousDir$item
+            usePreviousDir=0
+
+            if [ ! -f $file ]; then
+                touch ${file}
+
+                if [ $shouldOpenFile -eq 1 ]; then
+                    code "$file"
+                fi
+            else
+                printf "%s\n" "${previousDir}${grn}${item}${end} - ${red}Already Exists${end}"
+
+                if [ $shouldOpenFile -eq 1 ]; then
+                    code "$file"
+                fi
+            fi 
         fi
-    fi
-
-    if [ -f "$fileName" ]; then
-        echo "\e[37m$fileName \e[0;31malready exists"
-
-        if [ $dontOpen -eq 0 ]; then
-            code "$fileName"
-        fi
-
-        create=0
-        continue
-    elif [ -f "${previousDir}/${fileName}" ]; then
-        echo "\e[37m${previousDir}/${fileName} \e[0;31malready exists"
-
-        if [ $dontOpen -eq 0 ]; then
-            code "${previousDir}/${fileName}"
-        fi
-
-        create=0
-        continue
-    fi
-
-    if [ ! -d "$dir" ]; then
-        if [ $sameDir -eq 1 ]; then
-            sameDir=0
-            create=0
-        else
-            mkdir -p "$dir"
-            create=1
-        fi
-    fi
-
-    if [ $dontOpen -eq 0 ] && [ $create -eq 1 ]; then
-        touch "$fileName" && code "$fileName"
-    elif [ $dontOpen -eq 1 ] && [ $create -eq 1 ]; then
-        touch "$fileName"
-    elif [ $dontOpen -eq 0 ] && [ $create -eq 0 ]; then
-        touch "${previousDir}/${fileName}" && code "${previousDir}/${fileName}"
-    elif [ $dontOpen -eq 1 ] && [ $create -eq 0 ]; then
-        touch "${previousDir}/${fileName}"
-    fi
+    done
 done
