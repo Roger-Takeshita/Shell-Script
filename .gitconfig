@@ -1,0 +1,7 @@
+[core]
+	excludesfile = /Users/roger-that/.gitignore_global
+[alias]
+	log1 = "!git log --oneline"
+	ls = "!git ls-files -v | grep '^h'"
+	pullup = "!git pull upstream master"
+	conflict="!git diff --check | grep -i conflict"
