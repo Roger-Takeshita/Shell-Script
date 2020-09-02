@@ -21,8 +21,6 @@ alias sz="source ~/.zshrc"
 alias b="code ~/.bash_profile"
 alias sb="source ~/.bash_profile"
 
-alias codes="cd /Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes"
-
 alias python="python3"
 alias pip="pip3"
 alias pmr="python manage.py runserver"
@@ -33,8 +31,12 @@ alias lsa="ls -al"
 alias git-status='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell-Script/git-status.sh'
 alias touch='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell-Script/touch-open.sh'
 
-function portk () {
-  kill -QUIT $(sudo lsof -sTCP:LISTEN -i tcp:$1 -t)
+function killport () {
+    if (lsof -t -i:$1) {
+        kill -QUIT $(lsof -sTCP:LISTEN -i tcp:$1 -t)
+    } else {
+        echo "All Good"
+    }
 }
 
 # If you come from bash you might have to change your $PATH.

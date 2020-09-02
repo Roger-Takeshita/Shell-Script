@@ -19,7 +19,7 @@
         -   [Brace Expansion](#braceexpansion)
         -   [Output Redirection](#outputredirection)
             -   [Pipe](#pipe)
-            -   [Commnad Substitution](#commandsub)
+            -   [Command Substitution](#commandsub)
             -   [Key Combinations](#keycombinations)
     -   [Filtering and Processing Text](#processingtext)
         -   [Text Editors](#texteditors)
@@ -28,7 +28,7 @@
             -   [Emacs Editor](#emacseditor)
         -   [Sort - Sorting](#sorting)
         -   [Head/Tail - Head and Tail](#headtail)
-        -   [WC - Couting words](#couting)
+        -   [WC - Counting words](#couting)
         -   [Grep - Search and Filter Text](#grep)
         -   [Find - Search for Files](#find)
         -   [Tr - Find and Replace Characters](#findreplace)
@@ -79,26 +79,26 @@
         -   `touch folder/subfolder`
         -   `touch outside1.js head1/node1/tail1/leaf1.js + leaf2.js head2/node2/node2a/tail2a/leaf2a1.js + leaf2a2.js head2/node2/node2b/tail2b/leaf2b1.js + leaf2b2.js`
 
-            ```Bash
-              ├─ head1
-              │  └─ node1
-              │     └─ tail1
-              │        ├─ leaf1.js
-              │        └─ leaf2.js
-              ├─ head2
-              │  └─ node2
-              │     ├─ node2a
-              │     │  └─ tail2a
-              │     │     ├─ leaf2a1.js
-              │     │     └─ leaf2a2.js
-              │     └─ node2b
-              │        └─ tail2b
-              │           ├─ leaf2b1.js
-              │           └─ leaf2b2.js
-              ├─ outside1.js
-              ├─ folder
-              │  └─ subfolder
-            ```
+        ```Bash
+          ├─ head1
+          │  └─ node1
+          │     └─ tail1
+          │        ├─ leaf1.js
+          │        └─ leaf2.js
+          ├─ head2
+          │  └─ node2
+          │     ├─ node2a
+          │     │  └─ tail2a
+          │     │     ├─ leaf2a1.js
+          │     │     └─ leaf2a2.js
+          │     └─ node2b
+          │        └─ tail2b
+          │           ├─ leaf2b1.js
+          │           └─ leaf2b2.js
+          ├─ outside1.js
+          ├─ folder
+          │  └─ subfolder
+        ```
 
 <h1 id='bashshell'>Bash Shell</h1>
 
@@ -387,47 +387,45 @@
 
       # expansion
       mv *txt *jpg Documents
+
+        # input
+        mv filea?.{jpg,txt} Folder_a
+
+        # expansion
+        mv filea?.jpg filea?.txt Folder a
+
     ```
-
-
-    # input
-    mv filea?.{jpg,txt} Folder_a
-
-    # expansion
-    mv filea?.jpg filea?.txt Folder a
-
-````
 
 <h3 id='outputredirection'>Output Redirection</h3>
 
 [Go Back to Summary](#summary)
 
-* Redirecting standard output stream
-* `>` Saves the output of the command to a file
-  * **ATENTION** this will overwrite existing files
-  * ls > listing.txt
-  * cat > story.txt
-* `>>` Saves the output of the command to a file, but appends the output ot the end of the file
+-   Redirecting standard output stream
+-   `>` Saves the output of the command to a file
+    -   **ATENTION** this will overwrite existing files
+    -   ls > listing.txt
+    -   cat > story.txt
+-   `>>` Saves the output of the command to a file, but appends the output ot the end of the file
 
 <h4 id='pipe'>Pipe</h4>
 
-* Send the output of one command into the input of another command
-* `ls | less`
+-   Send the output of one command into the input of another command
+-   `ls | less`
 
-```Bash
-  cut -f 3 oscar.csv | grep 4 | wc -l
+    ```Bash
+      cut -f 3 oscar.csv | grep 4 | wc -l
 
-  # cut       -> get command
-  # -f 3      -> select the column 3
-  # oscar.csv -> file
-  # |         -> pipe, pass the output into the next command
-  # grep 4    -> grep command - grep the string '4'
-  # |         -> pipe, pass the output into the next command
-  # wc        -> wc, word count
-  # option -l -> count lines
-````
+      # cut       -> get command
+      # -f 3      -> select the column 3
+      # oscar.csv -> file
+      # |         -> pipe, pass the output into the next command
+      # grep 4    -> grep command - grep the string '4'
+      # |         -> pipe, pass the output into the next command
+      # wc        -> wc, word count
+      # option -l -> count lines
+    ```
 
-<h4 id='commandsub'>Commnad Substitution</h4>
+<h4 id='commandsub'>Command Substitution</h4>
 
 -   Replace a command with its output
     -   Output will become a part of the command line
@@ -501,7 +499,7 @@
 [Go Back to Summary](#summary)
 
 -   Bash assumes that spaces are columns separator by default
--   By default it sorts by the ASCI values of the string, that'w why the output is:
+-   By default it sorts by the ASCI values of the string, that's why the output is:
 
     ```Bash
       roger 100
@@ -511,7 +509,7 @@
       yumi 80
     ```
 
--   Sort the list alphabeticaly
+-   Sort the list alphabetically
 
     ```Bash
       sort <file name>
@@ -535,7 +533,7 @@
 -   `-k` sorts by field
     -   `sort -k 2`
     -   space-separated fields by default
--   Filter out repeted lines: `uniq`
+-   Filter out repeated lines: `uniq`
     -   `sort attendance | uniq`
     -   `-c` counts lines
 
@@ -543,7 +541,7 @@
 
 [Go Back to Summary](#summary)
 
--   Diplay the 10 largest files
+-   Display the 10 largest files
 
     ```Bash
       ls -lS | head
@@ -555,7 +553,7 @@
       # head -> 10 first results
     ```
 
--   Diplay only one file
+-   Display only one file
 
     ```Bash
       ls -lS | head -n 2
@@ -565,10 +563,10 @@
       # S    -> Size
       # |    -> pipe
       # head -> 10 first results
-      # -n 2 -> only one result (it's 2, because it alwyas print the total size)
+      # -n 2 -> only one result (it's 2, because it always print the total size)
     ```
 
--   Diplay only one file
+-   Display only one file
 
     ```Bash
       ls -lrS | tail -n 1
@@ -582,7 +580,7 @@
       # -n 1 -> only one result
     ```
 
-<h3 id='couting'>WC - Couting words</h3>
+<h3 id='couting'>WC - Counting words</h3>
 
 [Go Back to Summary](#summary)
 
@@ -597,8 +595,8 @@
 | grep string file | Searches for a text in a file         |
 | grep string \*   | Searches for a text in multiple files |
 | -i               | makes search case-insensitive         |
-| -c               | counts occurances                     |
-| -l               | shows line number of occurance        |
+| -c               | counts occurrence                     |
+| -l               | shows line number of occurrences      |
 | -v               | inverts the search (filter)           |
 
 -   This commands returns all the lines in the `oscar` file that contains `Ring` with `R` uppercased
@@ -672,7 +670,7 @@
       # '*txt'          -> regex, contains *txt
       # -exec           -> exec
       # grep            -> search
-      # -l curious      -> line of ocurrances for word 'curious'
+      # -l curious      -> line of occurrences for word 'curious'
       # {} \;           -> end of command
     ```
 
@@ -690,7 +688,7 @@
   # tr S s              -> replace uppercase S to lowercase s
 ```
 
--   Another opiton is:
+-   Another option is:
 
     ```Bash
       tr S s < physics_grades
@@ -704,7 +702,7 @@
 
       # tr            -> replace
       # \\t           -> tabs, we have to use double \, because just tab is \t
-      # \;            -> escape ;, semicolon is a especial charcter for bash
+      # \;            -> escape ;, semicolon is a especial character for bash
       # < oscar.tsv   -> from the input file .tsv
       # > oscar.csv   -> save the output into a new file .csv
     ```
@@ -714,17 +712,18 @@
 [Go Back to Summary](#summary)
 
 -   `sed`
+
     -   Stream editor
     -   Transform text
     -   Replace words
     -   Most common use: to replace `old` with `new`
 
-```Bash
-  sed 's/curiouser/stranger/g' demo/alice > alice2
+    ```Bash
+      sed 's/curiouser/stranger/g' demo/alice > alice2
 
-  # s/curiouser/stranger/  -> replace text curiouser with stranger
-  # g                      -> replace every occurance in every line
-```
+      # s/curiouser/stranger/  -> replace text curiouser with stranger
+      # g                      -> replace every occurrence in every line
+    ```
 
 -   `awk
     -   Complete programming language
@@ -789,15 +788,15 @@
 
 -   To filter for a specific program
 
-```Bash
-  ps ax | grep -i calc
+    ```Bash
+      ps ax | grep -i calc
 
-  # ps ax     -> Show all process id
-  # |         -> pipe
-  # grep      -> find
-  # -i        -> case-insensitive
-  # program
-```
+      # ps ax     -> Show all process id
+      # |         -> pipe
+      # grep      -> find
+      # -i        -> case-insensitive
+      # program
+    ```
 
 <h3 id='inspectingprocesses'>Inspecting Processes</h3>
 
