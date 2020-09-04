@@ -1,20 +1,18 @@
 #!/bin/bash
 
+# Developed by Roger Takeshita
+# https://github.com/Roger-Takeshita/Shell-Script
+
 if [ $# -eq 0 ]; then
     echo "\e[0;31mERROR:\e[37m I need a file" >&2
     return 1
 fi
 
-red=$'\e[1;31m'
-grn=$'\e[1;32m'
-yel=$'\e[1;33m'
-blu=$'\e[1;34m'
-mag=$'\e[1;35m'
-cyn=$'\e[1;36m'
+red=$'\e[0;31m'
+grn=$'\e[0;32m'
 end=$'\e[0m'
-
 previousDir=""
-shouldOpenFile=1;
+shouldOpenFile=1
 usePreviousDir=0
 
 for path in $@

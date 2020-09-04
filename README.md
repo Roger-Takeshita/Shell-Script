@@ -38,6 +38,9 @@
         -   [Background Jobs](#background)
         -   [Killing Jobs and Process](#killingprogram)
         -   [Inspecting Processes](#inspectingprocesses)
+-   [Shell Script](#shellscript)
+    -   [Make Shell Script Executable](#makeexec)
+    -   [Colors](#shcolors)
 
 <h1 id='myscripts'>My Scripts</h1>
 
@@ -810,3 +813,30 @@
         -   Display all processes
     -   `ps aux`
         -   Display all processes including owner
+
+<h1 id='shellscript'>Shell Script</h1>
+
+<h2 id='makeexec'>Make Shell Script Executable</h2>
+
+[Go Back to Summary](#summary)
+
+-   To make a script executable, use the following code:
+
+    ```Bash
+      chmod +x <path/file_name>
+    ```
+
+<h2 id='shcolors'>Colors</h2>
+
+[Go Back to Summary](#summary)
+
+```Bash
+  red=$'\e[0;31m'
+  grn=$'\e[0;32m'
+  yel=$'\e[0;33m'
+  blu=$'\e[0;34m'
+  mag=$'\e[0;35m'
+  cyn=$'\e[0;36m'
+  gry=$'\e[0;2m'
+  end=$'\e[0m'
+```
