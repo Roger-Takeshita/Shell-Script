@@ -5,6 +5,8 @@
     -   [Shell Scripts](#rogerscripts)
         -   [git-status](#gitstatus)
         -   [touch-open](#touchopen)
+        -   [clean-my-node](#cleanmynode)
+    -   [Colors and Properties](#shcolors)
 -   [Bash Shell](#bashshell)
     -   [Basic Command Line](#basiccommnad)
         -   [Help Page](#helppage)
@@ -38,9 +40,6 @@
         -   [Background Jobs](#background)
         -   [Killing Jobs and Process](#killingprogram)
         -   [Inspecting Processes](#inspectingprocesses)
--   [Shell Script](#shellscript)
-    -   [Make Shell Script Executable](#makeexec)
-    -   [Colors](#shcolors)
 
 <h1 id='myscripts'>My Scripts</h1>
 
@@ -102,6 +101,36 @@
           ├─ folder
           │  └─ subfolder
         ```
+
+<h3 id='cleanmhnode'>clean-my-node</h3>
+
+[Go Back to Summary](#summary)
+
+-   **clean-my-node**, deletes the `node_modules` and `package-lock.json`
+    -   Only works up to 3 lvls
+        -   1 lvl (codes folder) - checks if the current lvl has a `node_module` folder or `package-lock.json` file
+        -   2 lvl (repo folder) - checks the sub folder has a `node_module` folder or `package-lock.json` file
+        -   3 lvl (submodule) - checks the sub sub folder has a `node_module` folder or `package-lock.json` file
+
+<h2 id='shcolors'>Colors and Properties</h2>
+
+[Go Back to Summary](#summary)
+
+```Bash
+  red=$'\e[0;31m'
+  grn=$'\e[0;32m'
+  yel=$'\e[0;33m'
+  blu=$'\e[0;34m'
+  mag=$'\e[0;35m'
+  cyn=$'\e[0;36m'
+  gry=$'\e[0;2m'
+  end=$'\e[0m'
+  fade=$'\e[2m'   # fade
+
+  bold=$'\e[1m'   # bold fade
+  italic=$'\e[3m' # italic
+  under=$'\e[4m'  # underscore
+```
 
 <h1 id='bashshell'>Bash Shell</h1>
 
@@ -813,30 +842,3 @@
         -   Display all processes
     -   `ps aux`
         -   Display all processes including owner
-
-<h1 id='shellscript'>Shell Script</h1>
-
-<h2 id='makeexec'>Make Shell Script Executable</h2>
-
-[Go Back to Summary](#summary)
-
--   To make a script executable, use the following code:
-
-    ```Bash
-      chmod +x <path/file_name>
-    ```
-
-<h2 id='shcolors'>Colors</h2>
-
-[Go Back to Summary](#summary)
-
-```Bash
-  red=$'\e[0;31m'
-  grn=$'\e[0;32m'
-  yel=$'\e[0;33m'
-  blu=$'\e[0;34m'
-  mag=$'\e[0;35m'
-  cyn=$'\e[0;36m'
-  gry=$'\e[0;2m'
-  end=$'\e[0m'
-```
