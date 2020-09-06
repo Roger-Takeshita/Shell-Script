@@ -116,21 +116,55 @@
 
 [Go Back to Summary](#summary)
 
-```Bash
-  red=$'\e[0;31m'
-  grn=$'\e[0;32m'
-  yel=$'\e[0;33m'
-  blu=$'\e[0;34m'
-  mag=$'\e[0;35m'
-  cyn=$'\e[0;36m'
-  gry=$'\e[0;2m'
-  end=$'\e[0m'
-  fade=$'\e[2m'   # fade
+-   [Colors and Formatting](https://misc.flogisoft.com/bash/tip_colors_and_formatting)
 
-  bold=$'\e[1m'   # bold fade
-  italic=$'\e[3m' # italic
-  under=$'\e[4m'  # underscore
-```
+-   **Colors**
+
+    ```Bash
+      default=$'\e[39m'
+      black=$'\e[30m'
+      red=$'\e[31m'
+      green=$'\e[32m'
+      yellow=$'\e[33m'
+      blue=$'\e[34m'
+      magenta=$'\e[35m'
+      cyan=$'\e[36m'
+      lGray=$'\e[37m'
+      dGray=$'\e[38m'
+      lRed=$'\e[91m'
+      lGreen=$'\e[92m'
+      lYellow=$'\e[93m'
+      lBlue=$'\e[94m'
+      lMagenta=$'\e[95m'
+      lCyan=$'\e[96m'
+      white=$'\e[97m'
+    ```
+
+-   **Formatting**
+
+    ```Bash
+      dim=$'\e[2m'
+      dimNormal=$'\e[22m'
+
+      textBold=$'\e[1m'
+      textNormal=$'\e[21m'
+
+      italic=$'\e[3m'
+
+      end=$'\e[0m'
+
+      under=$'\e[4m'
+      underNormal=$'\e[24m'
+
+      blink=$'\e[5m'
+      blinkNormal=$'\e[25m'
+
+      inverted=$'\e[7m'
+      invertedNormal=$'\e[27m'
+
+      hidden=$'\e[8m'
+      hiddenNormal=$'\e[28m'
+    ```
 
 <h1 id='bashshell'>Bash Shell</h1>
 
