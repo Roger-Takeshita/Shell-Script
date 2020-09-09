@@ -106,11 +106,7 @@
 
 [Go Back to Summary](#summary)
 
--   **clean-my-node**, deletes the `node_modules` and `package-lock.json`
-    -   Only works up to 3 lvls
-        -   1 lvl (codes folder) - checks if the current lvl has a `node_module` folder or `package-lock.json` file
-        -   2 lvl (repo folder) - checks the sub folder has a `node_module` folder or `package-lock.json` file
-        -   3 lvl (submodule) - checks the sub sub folder has a `node_module` folder or `package-lock.json` file
+-   **clean-my-node**, deletes all `node_modules` folders and `package-lock.json` files
 
 <h2 id='shcolors'>Colors and Properties</h2>
 
