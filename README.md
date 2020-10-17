@@ -3,9 +3,10 @@
 - [Scripts](#scripts)
   - [Transform Into Executable | chmod +x](#transform-into-executable--chmod-x)
   - [My Scripts](#my-scripts)
-    - [git-status](#git-status)
-    - [touch-open](#touch-open)
-    - [clean-my-node](#clean-my-node)
+    - [@new - Git Repository](#new---git-repository)
+    - [git status - Projects Folder](#git-status---projects-folder)
+    - [touch](#touch)
+    - [clean - Projects Folder](#clean---projects-folder)
 - [Colors and Properties](#colors-and-properties)
 - [Bash Scripting](#bash-scripting)
   - [Basic Command Line](#basic-command-line)
@@ -50,30 +51,73 @@
 - The command `chmod +x <path/file_name>` transforms the script (.sh) into an executable
 - in your shell configuration you can add and alias to run the script
 
-  ```Bash
-    alias git-status='../Codes/Shell-Script/git-status.sh'
-    alias touch='../Codes/Shell-Script/touch-open.sh'
-    alias clean='../Codes/Shell-Script/clean-my-node.sh'
-  ```
-
 ## My Scripts
 
-### git-status
+---
+
+### @new - Git Repository
+
+[Go Back to Contents](#contents)
+
+- [Source Code](https://github.com/Roger-Takeshita/Shell-Script/blob/master/git-new-repo.sh)
+- Create a new github repository using command line. This script will create a new repo, add `.gitignore` and `README.md`
+
+- Add a new alias to your `zsh/bash`:
+
+  - `alias @new='./your_path/git-new-repo.sh'`
+
+- Config **username**
+
+  - Create a new github global variable, run `git config --global user.acc "your_github_username"`
+  - Check if it worked, `git config user.acc`, it should return your github username
+
+- Create **GitHub Token**
+
+  - Visit [https://github.com/settings/tokens](https://github.com/settings/tokens)
+    - Click on **Generate new token**
+      - Note: Give a name to your token
+      - Select: **repo**
+  - Create a new github global variable, run `git config --global user.token "your_github_token"`
+  - Check if it worked, `git config user.token`, it should return your github token
+
+- Create a new repo
+  - Run the command `@new My New Repo`
+    - This command will create a new repo called `My_New_Repo` with:
+      - `.gitignore` - already pre formatted
+      - `README.md` - basic content structure
+
+---
+
+### git status - Projects Folder
 
 [Go Back to Contents](#contents)
 
 - [Source Code](https://github.com/Roger-Takeshita/Shell-Script/blob/master/git-status.sh)
+- Make a "git status" to all of your projects
+
+- Add a new alias to your `zhr/bash`:
+
+  - `alias git-status='./your_path/git-status.sh'`
+
 - Search for uncommitted files from a specific folder (main coding folder or a single folder)
 
   ![](https://i.imgur.com/KxxT7Xc.png)
 
   ![](https://i.imgur.com/YM2lX4Am.png)
 
-### touch-open
+---
+
+### touch
 
 [Go Back to Contents](#contents)
 
 - [Source Code](https://github.com/Roger-Takeshita/Shell-Script/blob/master/touch-open.sh)
+- Create multiple folders and files with one command
+
+- Add a new alias to your `zhr/bash`:
+
+  - `alias touch='./your_path/touch-open.sh'`
+
 - Search if path and file already exist, otherwise, it will create the folder(s) and the file
 
   - if we pass `-n` as the first argument, the script wont open the files after creating them
@@ -107,11 +151,18 @@
       │  └─ subfolder
     ```
 
-### clean-my-node
+---
+
+### clean - Projects Folder
 
 [Go Back to Contents](#contents)
 
 - [Source Code](https://github.com/Roger-Takeshita/Shell-Script/blob/master/clean-my-node.sh)
+- Deletes all `node_modules` from your projects folder
+
+- Add a new alias to your `zhr/bash`:
+
+  - `alias clean='./your_path/clean-my-node.sh'`
 
 - **clean-my-node**, deletes all `node_modules` folders.
 
@@ -134,6 +185,7 @@
     blue=$'\e[34m'
     magenta=$'\e[35m'
     cyan=$'\e[36m'
+    orange=$'\e[38;5;202m'
     lGray=$'\e[37m'
     dGray=$'\e[38m'
     lRed=$'\e[91m'
