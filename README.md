@@ -85,6 +85,9 @@
     - This command will create a new repo called `My_New_Repo` with:
       - `.gitignore` - already pre formatted
       - `README.md` - basic content structure
+    - **Optional command**
+      - `-p` = private repository. Must be the fist argument after the command `@new`, otherwise it will create a repo e.g `my_-p_repo`, `my_repo_-p` depending where you added the `-p` (not private)
+        - `@new -p My Private Repo` **correct way**
 
 ---
 

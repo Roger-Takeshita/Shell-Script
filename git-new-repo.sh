@@ -17,6 +17,8 @@ token=$(git config user.token)
 folderName=''
 markdownTitle=''
 markdownHash=''
+private=false
+start=1
 
 gitignore="# Compiled source #
 ###################
@@ -131,15 +133,20 @@ if [ "$token" = "" ]; then
    exit 1
 fi
 
-if [ $# -eq 0 ]; then
-    echo "${red}${bold}ERROR:${end}${default} You must provdie a foder name"
+if [ $# -eq 0 ] || [ $# -eq 1 ] && [ "$1" = "-p" ]; then
+    echo "${red}${bold}ERROR:${end}${default} You must provide a foder name"
     exit 1
 fi
 
+if [ "$1" = "-p" ]; then
+    private=true
+    start=2
+fi
+
 stringConcat() {
-    for count in `seq 1 $#`;
+    for count in `seq $start $#`;
     do
-        if [ $count -eq 1 ]; then
+        if [ $count -eq $start ]; then
             folderName=$@[count]
             markdownTitle="${@[count]:u}"
             markdownHash="${@[count]:l}"
@@ -161,7 +168,7 @@ initProject() {
         git add .
         git commit -m "First Commit"
         git remote add origin https://github.com/$user/$folderName.git
-        curl -u $user:$token --silent --output /dev/null https://api.github.com/user/repos -d '{"name":"'"$folderName"'", "private": false}'
+        curl -u $user:$token --silent --output /dev/null https://api.github.com/user/repos -d '{"name":"'"$folderName"'", "private": "'"$private"'"}'
         git push -u origin master
         exec zsh
     else 
