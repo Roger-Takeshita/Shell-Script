@@ -3,17 +3,17 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-if [ $# -eq 0 ]; then
-    echo "\e[0;31mERROR:\e[37m I need a file" >&2
-    return 1
-fi
-
-red=$'\e[0;31m'
-grn=$'\e[0;32m'
-end=$'\e[0m'
+default=$'\e[39m'
+red=$'\e[31m'
+green=$'\e[32m'
 previousDir=""
 shouldOpenFile=1
 usePreviousDir=0
+
+if [ $# -eq 0 ]; then
+    echo "${red}ERROR:${default} I need a file"
+    exit 1
+fi
 
 for path in $@
 do
@@ -67,7 +67,7 @@ do
                     code "$file"
                 fi
             else
-                printf "%s\n" "${previousDir}${grn}${item}${end} - ${red}Already Exists${end}"
+                printf "%s\n" "${previousDir}${green}${item}${default} - ${red}Already Exists${default}"
 
                 if [ $shouldOpenFile -eq 1 ]; then
                     code "$file"

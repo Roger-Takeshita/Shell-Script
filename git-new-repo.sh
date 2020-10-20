@@ -45,6 +45,12 @@ gitignore="# Compiled source #
 # Logs and databases #
 ######################
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+db.sqlite3
+db.sqlite3-journal
 
 # OS generated files #
 ######################
@@ -55,6 +61,27 @@ gitignore="# Compiled source #
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Distribution / packaging #
+############################
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Testing #
 ###########
@@ -71,6 +98,7 @@ test/version_tmp
 # node #
 ########
 node_modules
+jspm_packages/
 
 # CTags #
 #########
@@ -79,44 +107,93 @@ tags
 # Env #
 #######
 .env
-
-# Python #
-#######
-*.pyc
-__pycache__/
-
-# gitignore
-# .gitignore
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# environment
-.env
-*.env
-
-# vscode
-*.vscode
-
-**build/
-
-# c++ formatter
-.clang-format
-
-# Roger-That
-roger-that
-Roger-That
-Roger-That.md
-
-# Google Firebase
-**/serviceAccountKey.json
-**/env.json
-
-# React
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
 *.env.local
 
-# AWS Private Key
-*.pem"
+# Python #
+##########
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+media
+
+# Django.Python Stack #
+#######################
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+# PyInstaller #
+###############
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs #
+##################
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports #
+################################
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
+
+# Jupyter Notebook #
+####################
+.ipynb_checkpoints
+
+# pyenv #
+#########
+.python-version
+
+# Jupyter Notebook #
+####################
+.ipynb_checkpoints
+
+# vscode #
+##########
+.vscode
+
+# c++ formatter #
+#################
+.clang-format
+
+# Google Firebase #
+###################
+serviceAccountKey.json
+env.json
+
+# AWS Private Key #
+###################
+*.pem
+
+# Roger-That #
+##############
+downloads/
+roger-that/
+roger-that.md"
+
 
 if [ "$user" = "" ]; then
    echo Please add your github username to your git config
