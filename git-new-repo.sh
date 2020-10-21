@@ -65,6 +65,7 @@ Thumbs.db
 # Distribution / packaging #
 ############################
 .Python
+.expo/
 build/
 develop-eggs/
 dist/
@@ -115,6 +116,7 @@ env.bak/
 venv.bak/
 pythonenv*
 *.env.local
+*env.*
 
 # Python #
 ##########
@@ -124,6 +126,7 @@ pythonenv*
 __pycache__/
 local_settings.py
 media
+bin/
 
 # Django.Python Stack #
 #######################
@@ -166,6 +169,14 @@ pytestdebug.log
 # pyenv #
 #########
 .python-version
+
+# GraphQL #
+###########
+docker-compose.yml
+
+# gitignore #
+#############
+# .gitignore
 
 # Jupyter Notebook #
 ####################
