@@ -35,7 +35,7 @@ do
     elif [ $usePreviousDir -eq 0 ]; then
         dir=""
         previousDir=""
-    fi 
+    fi
 
     for item in ${items[@]}
     do
@@ -44,19 +44,24 @@ do
         fi
 
         if [[ ${item%.*} == ${item##*.} ]]; then
-            if [ $usePreviousDir -eq 1 ]; then
-                dir="${previousDir}${item}/"
+            if [ "$item" == "Dockerfile" ] || [ "$item" == "Procfile" ]; then
+                if [ ! -f $item ]; then
+                    touch ${item}
+                fi
             else
-                dir="${dir}${item}/"
+                if [ $usePreviousDir -eq 1 ]; then
+                    dir="${previousDir}${item}/"
+                else
+                    dir="${dir}${item}/"
+                fi
+
+                previousDir=$dir
+
+                if [ ! -d "$dir" ]; then
+                    mkdir -p "$dir"
+                fi
             fi
-
-            previousDir=$dir
-
-
-            if [ ! -d "$dir" ]; then
-                mkdir -p "$dir"
-            fi
-        else 
+        else
             file=$previousDir$item
             usePreviousDir=0
 
@@ -72,7 +77,7 @@ do
                 if [ $shouldOpenFile -eq 1 ]; then
                     code "$file"
                 fi
-            fi 
+            fi
         fi
     done
 done
