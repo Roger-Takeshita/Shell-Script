@@ -203,7 +203,12 @@ env.json
 ##############
 downloads/
 roger-that/
-roger-that.md"
+roger-that.md
+
+# Auth File #
+#############
+**/auth.ini
+"
 
 
 if [ "$user" = "" ]; then
@@ -243,7 +248,7 @@ stringConcat() {
             markdownTitle+=" ${@[count]:u}"
             markdownHash+="-${@[count]:l}"
         fi
-    done    
+    done
 }
 
 initProject() {
@@ -258,8 +263,9 @@ initProject() {
         git remote add origin https://github.com/$user/$folderName.git
         curl -u $user:$token --silent --output /dev/null https://api.github.com/user/repos -d '{"name":"'"$folderName"'", "private": "'"$private"'"}'
         git push -u origin master
+        code .
         exec zsh
-    else 
+    else
         echo "${red}${bold}ERROR:${end}${default} A folder named '${orange}$folderName${default}' already exists, please use a different name"
         exit 1
     fi

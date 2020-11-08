@@ -20,6 +20,7 @@ alias z="code ~/.zshrc"
 alias sz="source ~/.zshrc"
 alias b="code ~/.bash_profile"
 alias sb="source ~/.bash_profile"
+alias task="htop"
 
 alias python="python3"
 alias pip="pip3"
@@ -28,8 +29,19 @@ alias pms="python manage.py shell"
 alias pm="python manage.py"
 
 alias lsa="ls -al"
-alias git-status='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell-Script/git-status.sh'
-alias touch='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell-Script/touch-open.sh'
+alias git-status='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell_Script/Scripts/git-status/git-status.sh'
+alias @img='python3 /Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Python/11_Scripting/Imgur/Imgur.py'
+alias @new='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell_Script/Scripts/git-new-repo/git-new-repo.sh'
+alias touch='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell_Script/Scripts/touch-open/touch-open.sh'
+alias clean='/Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes/Shell_Script/Scripts/clean-my-node/clean-my-node.sh'
+alias git-ignore='code /Users/roger-that/.gitignore_global'
+alias git-config='code /Users/roger-that/.gitconfig'
+alias ssh-config='code /Users/roger-that/.ssh/config'
+
+#= Shortcuts
+alias desk="cd /Users/roger-that/Desktop"
+alias desktop="cd /Users/roger-that/Desktop"
+alias codes="cd /Users/roger-that/Library/Mobile\ Documents/com~apple~CloudDocs/Codes"
 
 function killport () {
     if (lsof -t -i:$1) {
@@ -38,6 +50,15 @@ function killport () {
         echo "All Good"
     }
 }
+
+function kport() {
+    lsof -n -i4TCP:$1 | grep LISTEN | awk '{ print $2 }' | xargs kill
+}
+
+#! Ruby on Rails
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+
+#PS1="%{%F{red}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~ %{$%f%}%% "
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -140,4 +161,5 @@ source $ZSH/oh-my-zsh.sh
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
-#
+#if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
