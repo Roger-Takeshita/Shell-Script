@@ -120,6 +120,7 @@ pythonenv*
 
 # Python #
 ##########
+**/auth.ini
 *.log
 *.pot
 *.pyc
@@ -170,14 +171,6 @@ pytestdebug.log
 #########
 .python-version
 
-# GraphQL #
-###########
-docker-compose.yml
-
-# gitignore #
-#############
-# .gitignore
-
 # Jupyter Notebook #
 ####################
 .ipynb_checkpoints
@@ -199,15 +192,15 @@ env.json
 ###################
 *.pem
 
+# Ruby on Rails #
+#################
+**/tmp
+
 # Roger-That #
 ##############
 downloads/
 roger-that/
 roger-that.md
-
-# Auth File #
-#############
-**/auth.ini
 "
 
 
