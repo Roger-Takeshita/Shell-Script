@@ -253,9 +253,10 @@ initProject() {
         echo $gitignore >> .gitignore
         git add .
         git commit -m "First Commit"
+        git branch -M main
         git remote add origin https://github.com/$user/$folderName.git
-        curl -u $user:$token --silent --output /dev/null https://api.github.com/user/repos -d '{"name":"'"$folderName"'", "private": "'"$private"'"}'
-        git push -u origin master
+        curl -u $user:$token --silent --output /dev/null https://api.github.com/user/repos -d '{"name":"'$folderName'", "private": '$private'}'
+        git push -u origin main
         code .
         exec zsh
     else
