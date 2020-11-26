@@ -195,6 +195,8 @@ env.json
 # Ruby on Rails #
 #################
 **/tmp
+**/public/packs/
+**/config/master.key
 
 # Roger-That #
 ##############
