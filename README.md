@@ -53,6 +53,8 @@
 - [clean my node](https://github.com/Roger-Takeshita/Shell-Script/blob/master/Scripts/clean-my-node)
 - [git new Repo](https://github.com/Roger-Takeshita/Shell-Script/blob/master/Scripts/git-new-repo)
 - [git status](https://github.com/Roger-Takeshita/Shell-Script/blob/master/Scripts/git-status)
+- [open app](https://github.com/Roger-Takeshita/Shell-Script/blob/master/Scripts/open-app)
+- [MacOS Screenshot Rename](https://github.com/Roger-Takeshita/Shell-Script/blob/master/Scripts/macos-screenshot-rename)
 
 # Colors and Properties
 
