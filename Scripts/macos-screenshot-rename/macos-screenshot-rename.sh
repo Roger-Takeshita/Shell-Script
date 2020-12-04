@@ -13,6 +13,8 @@ if [ "$name" != "" ]; then
     # defaults write com.apple.screencapture "include-date" 0
     # + Adds back the timestamps
     # defaults write com.apple.screencapture "include-date" 1
+    # + Removes shadows
+    # defaults write com.apple.screencapture disable-shadow -bool true
     # + Changes the filename
     defaults write com.apple.screencapture name "$name"
     killall SystemUIServer
