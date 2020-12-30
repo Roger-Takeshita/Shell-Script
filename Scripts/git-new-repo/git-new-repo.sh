@@ -99,6 +99,7 @@ test/version_tmp
 # node #
 ########
 node_modules
+node_modules.nosync
 jspm_packages/
 
 # CTags #
