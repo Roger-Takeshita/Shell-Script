@@ -186,8 +186,8 @@ pytestdebug.log
 
 # Google Firebase #
 ###################
-serviceAccountKey.json
-env.json
+**/serviceAccountKey.json
+**/env.json
 
 # AWS Private Key #
 ###################
@@ -202,6 +202,8 @@ env.json
 # Roger-That #
 ##############
 downloads/
+_roger-that/
+_0_roger-that/
 roger-that/
 roger-that.md
 "
