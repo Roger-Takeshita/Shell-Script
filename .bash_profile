@@ -36,11 +36,12 @@ alias bu="bundle update $@"
 
 # _ Scripts
 alias git-status='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/git-status/git-status.sh'
+alias git-pull='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/git-pull/git-pull.sh'
 alias @img='python3 /Users/roger-that/Documents/Codes/Python/11_Scripts/Imgur/Imgur.py'
 alias @new='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/git-new-repo/git-new-repo.sh'
 alias @open='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/open-app/open-app.sh'
 alias @screenshot='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/macos-screenshot-rename/macos-screenshot-rename.sh'
-alias touch='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/touch-open/touch-open.sh'
+alias @touch='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/touch-open/touch-open.sh'
 alias @clear='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/clean-my-node/clean-my-node.sh'
 alias @npm='/Users/roger-that/Documents/Codes/Shell_Script/Scripts/npm-install/npm-install.sh'
 

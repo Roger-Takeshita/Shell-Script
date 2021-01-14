@@ -65,50 +65,43 @@
 - **Colors**
 
   ```Bash
-    default=$'\e[39m'
-    black=$'\e[30m'
-    red=$'\e[31m'
-    green=$'\e[32m'
-    yellow=$'\e[33m'
-    blue=$'\e[34m'
-    magenta=$'\e[35m'
-    cyan=$'\e[36m'
-    orange=$'\e[38;5;202m'
-    lGray=$'\e[37m'
-    dGray=$'\e[38m'
-    lRed=$'\e[91m'
-    lGreen=$'\e[92m'
-    lYellow=$'\e[93m'
-    lBlue=$'\e[94m'
-    lMagenta=$'\e[95m'
-    lCyan=$'\e[96m'
-    white=$'\e[97m'
+    RST=$'\e[39m'      # reset
+    BK=$'\e[30m'       # black
+    RD=$'\e[31m'       # red
+    GN=$'\e[32m'       # green
+    YL=$'\e[33m'       # yellow
+    BL=$'\e[34m'       # blue
+    M=$'\e[35m'        # magenta
+    C=$'\e[36m'        # cyan
+    OG=$'\e[38;5;202m' # orange
+    lGY=$'\e[37m'      # light gray
+    dGY=$'\e[38m'      # dark gray
+    lRD=$'\e[91m'      # light red
+    lGN=$'\e[92m'      # light green
+    lYL=$'\e[93m'      # light yellow
+    lBL=$'\e[94m'      # light blue
+    lM=$'\e[95m'       # light magenta
+    lCY=$'\e[96m'      # light cyan
+    WHT=$'\e[97m'      # white
   ```
 
 - **Formatting**
 
   ```Bash
-    dim=$'\e[2m'
-    dimNormal=$'\e[22m'
-
-    textBold=$'\e[1m'
-    textNormal=$'\e[21m'
-
-    italic=$'\e[3m'
-
-    end=$'\e[0m'
-
-    under=$'\e[4m'
-    underNormal=$'\e[24m'
-
-    blink=$'\e[5m'
-    blinkNormal=$'\e[25m'
-
-    inverted=$'\e[7m'
-    invertedNormal=$'\e[27m'
-
-    hidden=$'\e[8m'
-    hiddenNormal=$'\e[28m'
+    Dim=$'\e[2m'
+    NoDim=$'\e[22m'
+    Bold=$'\e[1m'
+    NoBold=$'\e[21m'
+    Italic=$'\e[3m'
+    End=$'\e[0m'
+    Under=$'\e[4m'
+    NoUnder=$'\e[24m'
+    Blink=$'\e[5m'
+    NoBlink=$'\e[25m'
+    Inverted=$'\e[7m'
+    NoInverted=$'\e[27m'
+    Hidden=$'\e[8m'
+    NoHidden=$'\e[28m'
   ```
 
 # Bash Scripting
