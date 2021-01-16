@@ -6,17 +6,20 @@
 tput reset
 
 dir="`pwd`"
-red=$'\e[0;31m'
-yel=$'\e[0;33m'
-gry=$'\e[0;2m'
-end=$'\e[0m'
+RST=$'\e[0m'
+RD=$'\e[31m'
+GN=$'\e[32m'
+GY=$'\e[2m'
+Bold=$'\e[1m'
+End=$'\e[0m'
 mode='single-folder'
 
 echoFolderName() {
     if [ "$mode" = "single-folder" ]; then
-        echo "${red}Modified/Untracked"
+        echo "${RD}Modified/Untracked"
     else if
-        echo "${red}Modified/Untracked --> ${1##*/}${end}"
+        # echo "${RD}Modified/Untracked --> ${1##*/}${RST}"
+        echo "${RD}${Bold}→ ${1##*/}${End}${RST}"
     fi
 }
 
@@ -47,19 +50,19 @@ gitStatus() {
             fi
 
             if [ $unpushedCommit -eq 1 ]; then
-                echo "${yel}  $unpushedCommit Unpushed Commit"
+                echo "${GN}   $unpushedCommit Unpushed Commit"
             else
-                echo "${yel}  $unpushedCommit Unpushed Commits"
+                echo "${GN}   $unpushedCommit Unpushed Commits"
             fi
         fi
 
-        if [ $statusFlag -eq 0 ]; then
-            if [ "$mode" = "single-folder" ]; then
-                echo "${gry}Nothing to Commit"
-            else if
-                echo "${gry}Nothing to Commit  --> ${1##*/}${end}"
-            fi
-        fi
+        # if [ $statusFlag -eq 0 ]; then
+        #     if [ "$mode" = "single-folder" ]; then
+        #         echo "${GY}Nothing to Commit"
+        #     else if
+        #         echo "${GY}Nothing to Commit  --> ${1##*/}${RST}"
+        #     fi
+        # fi
 
         git status -s
         cd ../
