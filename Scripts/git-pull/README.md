@@ -11,4 +11,4 @@
 
 - Run the script inside a folder that has multiple repositories
 
-  ![](https://i.imgur.com/sfAsX5V.png)
+  ![](https://i.imgur.com/2FhgRB4.png)
