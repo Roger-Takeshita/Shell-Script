@@ -30,11 +30,11 @@ gitPull() {
         fi
 
         if [ -n $branch ]; then
-            response=`cd $1; git pull origin $branch | xargs`
-            if [[ $response =~ '(Updating .*)' ]]; then
-                echo "${Blink}${RD}${Bold}Aborted!${End}${RST}${NoBlink} ${OG}Uncommited changes.${RST}"
-            else
+            response=`cd $1; git pull origin $branch`
+            if [[ $response =~ '.*Fast-forward.*' ]] || [[ $response == 'Already up to date.' ]]; then
                 echo "${GN}${response}${RST}"
+            else
+                echo "${Blink}${RD}${Bold}ATTENTION!${End}${RST}${NoBlink} ${OG}Uncommited changes.${RST}"
             fi
         fi
     fi
