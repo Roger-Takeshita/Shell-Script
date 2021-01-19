@@ -13,7 +13,7 @@ Bold=$'\e[1m'
 End=$'\e[0m'       # reset format
 Blink=$'\e[5m'
 NoBlink=$'\e[25m'
-
+regex='^Updating .*$'
 
 gitPull() {
     if [ -d "$1/.git" ]; then
@@ -30,10 +30,9 @@ gitPull() {
         fi
 
         if [ -n $branch ]; then
-            response=`cd $1; git pull origin $branch`
-
-            if [ "$response" != "Already up to date." ]; then
-                echo "${Blink}${RD}${Bold}Aborted!${End}${RST}${NoBlink} ${OG}Uncommited changes, stash them before you merge.${RST}"
+            response=`cd $1; git pull origin $branch | xargs`
+            if [[ $response =~ '(Updating .*)' ]]; then
+                echo "${Blink}${RD}${Bold}Aborted!${End}${RST}${NoBlink} ${OG}Uncommited changes.${RST}"
             else
                 echo "${GN}${response}${RST}"
             fi
