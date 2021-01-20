@@ -198,6 +198,7 @@ pytestdebug.log
 **/tmp
 **/public/packs/
 **/config/master.key
+*.toml
 
 # Roger-That #
 ##############

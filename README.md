@@ -64,25 +64,45 @@
 
 - **Colors**
 
+  - Foreground (text)
+
+    ![](https://i.imgur.com/Pwy1doB.png)
+
+    ```Bash
+      [38;5;ColorNumberm
+
+      # [38;5;1m = RED
+    ```
+
+  - Background
+
+    ![](https://i.imgur.com/8WTrg8Q.png)
+
+    ```Bash
+      [48;5;ColorNumberm
+
+      # [48;5;22m = GREEN
+    ```
+
   ```Bash
-    RST=$'\e[39m'      # reset
-    BK=$'\e[30m'       # black
-    RD=$'\e[31m'       # red
-    GN=$'\e[32m'       # green
-    YL=$'\e[33m'       # yellow
-    BL=$'\e[34m'       # blue
-    M=$'\e[35m'        # magenta
-    C=$'\e[36m'        # cyan
-    OG=$'\e[38;5;202m' # orange
-    lGY=$'\e[37m'      # light gray
-    dGY=$'\e[38m'      # dark gray
-    lRD=$'\e[91m'      # light red
-    lGN=$'\e[92m'      # light green
-    lYL=$'\e[93m'      # light yellow
-    lBL=$'\e[94m'      # light blue
-    lM=$'\e[95m'       # light magenta
-    lCY=$'\e[96m'      # light cyan
-    WHT=$'\e[97m'      # white
+    RST=$'\e[39m'       # reset
+    BK=$'\e[38;5;0m'    # black
+    RD=$'\e[38;5;1m'    # red
+    GN=$'\e[38;5;22m'   # green
+    YL=$'\e[38;5;3m'    # yellow
+    BL=$'\e[38;5;21m'   # blue
+    M=$'\e[38;5;13m'    # magenta
+    C=$'\e[38;5;6m'     # cyan
+    OG=$'\e[38;5;172m'  # orange
+    lGY=$'\e[38;5;250m' # light gray
+    dGY=$'\e[38;5;240m' # dark gray
+    lRD=$'\e[38;5;197m' # light red
+    lGN=$'\e[38;5;2m'   # light green
+    lYL=$'\e[38;5;11m'  # light yellow
+    lBL=$'\e[38;5;33m'  # light blue
+    lM=$'\e[38;5;213m'  # light magenta
+    lCY=$'\e[38;5;80m'  # light cyan
+    WHT=$'\e[38;5;15m'  # white
   ```
 
 - **Formatting**
