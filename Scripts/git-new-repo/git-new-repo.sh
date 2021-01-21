@@ -5,12 +5,14 @@
 
 # tput reset
 
-red=$'\e[31m'
-blue=$'\e[34m'
-orange=$'\e[38;5;202m'
-default=$'\e[39m'
-bold=$'\e[1m'
-end=$'\e[0m'
+
+RSTC=$'\e[39m'      # reset color
+lBL=$'\e[38;5;117m' # light blue
+lOG=$'\e[38;5;172m' # light orange
+lRD=$'\e[38;5;1m'   # light red
+
+RSTF=$'\e[0m'
+Bold=$'\e[1m'
 
 user=$(git config user.acc)
 token=$(git config user.token)
@@ -212,24 +214,23 @@ roger-that.md
 
 if [ "$user" = "" ]; then
    echo Please add your github username to your git config
-   echo Run the following command: ${blue}git config --global user.acc \"${orange}your_github_username${blue}\"
+   echo Run the following command: ${lBL}git config --global user.acc \"${lOG}your_github_username${RSTC}\"
    exit 1
 fi
 
 if [ "$token" = "" ]; then
    echo Please add a personal token to your git config
-   echo Visit ${blue}https://github.com/settings/tokens${default}
-   echo " - ${orange}Generate new token${default}"
-   echo "   - Select ${orange}repo${default}"
-   echo Run the following command: ${blue}git config --global user.token \"${orange}your_github_token${blue}\"
+   echo Visit ${lBL}https://github.com/settings/tokens${RSTC}
+   echo " - ${lOG}Generate new token${RSTC}"
+   echo "   - Select ${lOG}repo${RSTC}"
+   echo Run the following command: ${lBL}git config --globauser.token \"${lOG}your_github_token${RSTC}\"
    exit 1
 fi
 
 if [ $# -eq 0 ] || [ $# -eq 1 ] && [ "$1" = "-p" ]; then
-    echo "${red}${bold}ERROR:${end}${default} You must provide a foder name"
+    echo "${lRD}${Bold}ERROR:${RSTF}${RSTC} You must provide a foder name"
     exit 1
 fi
-
 if [ "$1" = "-p" ]; then
     private=true
     start=2
@@ -266,7 +267,7 @@ initProject() {
         code .
         exec zsh
     else
-        echo "${red}${bold}ERROR:${end}${default} A folder named '${orange}$folderName${default}' already exists, please use a different name"
+        echo "${lRD}${Bold}ERROR:${RSTF}${RSTC} A folder named ${lOG}$folderName${RSTC} already exists, please use a different name"
         exit 1
     fi
 }

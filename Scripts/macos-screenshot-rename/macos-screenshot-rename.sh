@@ -3,8 +3,8 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-red=$'\e[31m'
-default=$'\e[39m'
+RSTC=$'\e[39m'      # reset color
+lRD=$'\e[38;5;1m'   # light red
 
 name=$@
 
@@ -19,5 +19,5 @@ if [ "$name" != "" ]; then
     defaults write com.apple.screencapture name "$name"
     killall SystemUIServer
 else
-    echo "${red}Output filename is missing${default}"
+    echo "${lRD}Output filename is missing${RSTC}"
 fi

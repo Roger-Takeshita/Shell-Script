@@ -6,20 +6,20 @@
 tput reset
 
 dir="`pwd`"
-RST=$'\e[0m'
-RD=$'\e[31m'
-GN=$'\e[32m'
-GY=$'\e[2m'
+RSTC=$'\e[39m'      # reset color
+GY=$'\e[38;5;240m'  # gray
+lGN=$'\e[38;5;2m'   # light green
+lRD=$'\e[38;5;1m'   # light red
+RSTF=$'\e[0m'
 Bold=$'\e[1m'
-End=$'\e[0m'
 mode='single-folder'
 
 echoFolderName() {
     if [ "$mode" = "single-folder" ]; then
-        echo "${RD}Modified/Untracked"
+        echo "${lRD}Modified/Untracked"
     else if
-        # echo "${RD}Modified/Untracked --> ${1##*/}${RST}"
-        echo "${RD}${Bold}→ ${1##*/}${End}${RST}"
+        # echo "${lRD}Modified/Untracked --> ${1##*/}${RST}"
+        echo "${lRD}${Bold}——————› ${1##*/}${RSTF}${RST}"
     fi
 }
 
@@ -50,9 +50,9 @@ gitStatus() {
             fi
 
             if [ $unpushedCommit -eq 1 ]; then
-                echo "${GN}   $unpushedCommit Unpushed Commit"
+                echo "${lGN}   $unpushedCommit Unpushed Commit"
             else
-                echo "${GN}   $unpushedCommit Unpushed Commits"
+                echo "${lGN}   $unpushedCommit Unpushed Commits"
             fi
         fi
 

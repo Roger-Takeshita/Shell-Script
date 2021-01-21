@@ -4,13 +4,14 @@
 # https://github.com/Roger-Takeshita/Shell-Script
 
 dir=`pwd`
-RST=$'\e[39m'      # reset color
-RD=$'\e[31m'       # red
-GN=$'\e[32m'       # green
-BL=$'\e[34m'       # blue
-OG=$'\e[38;5;202m' # orange
+RSTC=$'\e[39m'      # reset color
+BL=$'\e[38;5;27m'   # blue
+lGN=$'\e[38;5;2m'   # light green
+lOG=$'\e[38;5;215m' # light orange
+lRD=$'\e[38;5;1m'   # light red
+
+RSTF=$'\e[0m'       # reset format
 Bold=$'\e[1m'
-End=$'\e[0m'       # reset format
 Blink=$'\e[5m'
 NoBlink=$'\e[25m'
 regex='^Updating .*$'
@@ -21,7 +22,7 @@ gitPull() {
         master=`cd $1; git show-ref refs/heads/master`
         branch=''
 
-        echo "$Bold$BL→ $(basename $1)$RST$End"
+        echo "$Bold$BL——————› $(basename $1)$RST$RSTF"
 
         if [ -n "$main" ]; then
             branch="main"
@@ -32,9 +33,9 @@ gitPull() {
         if [ -n $branch ]; then
             response=`cd $1; git pull origin $branch`
             if [[ $response =~ '.*Fast-forward.*' ]] || [[ $response == 'Already up to date.' ]]; then
-                echo "${GN}${response}${RST}"
+                echo "${lGN}${response}${RST}"
             else
-                echo "${Blink}${RD}${Bold}ATTENTION!${End}${RST}${NoBlink} ${OG}Uncommited changes.${RST}"
+                echo "${Blink}${lRD}${Bold}ATTENTION!${RSTF}${RST}${NoBlink} ${lOG}Uncommited changes.${RST}"
             fi
         fi
     fi

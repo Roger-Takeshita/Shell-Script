@@ -85,7 +85,7 @@
     ```
 
   ```Bash
-    RST=$'\e[39m'       # reset
+    RSTC=$'\e[39m'      # reset color
     BK=$'\e[38;5;0m'    # black
     BL=$'\e[38;5;27m'   # blue
     GY=$'\e[38;5;240m'  # gray
@@ -98,21 +98,21 @@
     lGY=$'\e[38;5;250m' # light gray
     lGN=$'\e[38;5;2m'   # light green
     lM=$'\e[38;5;219m'  # light magenta
-    lOG=$'\e[38;5;172m' # light orange
+    lOG=$'\e[38;5;215m' # light orange
     lRD=$'\e[38;5;1m'   # light red
-    lYL=$'\e[38;5;227m' # light yellow
+    lYL=$'\e[38;5;228m' # light yellow
     WHT=$'\e[38;5;15m'  # white
   ```
 
 - **Formatting**
 
   ```Bash
+    RSTF=$'\e[0m'
     Dim=$'\e[2m'
     NoDim=$'\e[22m'
     Bold=$'\e[1m'
     NoBold=$'\e[21m'
     Italic=$'\e[3m'
-    End=$'\e[0m'
     Under=$'\e[4m'
     NoUnder=$'\e[24m'
     Blink=$'\e[5m'

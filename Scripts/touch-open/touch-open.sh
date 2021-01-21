@@ -3,15 +3,16 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-default=$'\e[39m'
-red=$'\e[31m'
-green=$'\e[32m'
+RSTC=$'\e[39m'      # reset color
+lGN=$'\e[38;5;2m'   # light green
+lRD=$'\e[38;5;1m'   # light red
+
 previousDir=""
 shouldOpenFile=1
 usePreviousDir=0
 
 if [ $# -eq 0 ]; then
-    echo "${red}ERROR:${default} I need a file"
+    echo "${lRD}ERROR:${RSTC} I need a file"
     exit 1
 fi
 
@@ -72,7 +73,7 @@ do
                     code "$file"
                 fi
             else
-                printf "%s\n" "${previousDir}${green}${item}${default} - ${red}Already Exists${default}"
+                printf "%s\n" "${previousDir}${lGN}${item}${RSTC} - ${lRD}Already Exists${RSTC}"
 
                 if [ $shouldOpenFile -eq 1 ]; then
                     code "$file"

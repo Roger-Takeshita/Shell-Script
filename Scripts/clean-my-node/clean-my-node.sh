@@ -3,11 +3,13 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-red=$'\e[0;31m'
-green=$'\e[0;32m'
-orange=$'\e[38;5;202m'
-end=$'\e[0m'
-bold=$'\e[1m'
+RSTC=$'\e[39m'      # reset color
+lGN=$'\e[38;5;2m'   # light green
+lOG=$'\e[38;5;215m' # light orange
+lRD=$'\e[38;5;1m'   # light red
+
+RSTF=$'\e[0m'
+Bold=$'\e[1m'
 
 checkFolder() {
     for fileFolder in "$1"/*; do
@@ -15,16 +17,16 @@ checkFolder() {
 
         if [ -d "$baseFolder/node_modules" ]; then
             rm -rf "$baseFolder/node_modules"
-            echo "${red}${bold}Deleted${end} $baseFolder/${orange}node_modules"${end}
+            echo "${lRD}${Bold}Deleted${RSTF} $baseFolder/${lOG}node_modules"${RSTF}
         elif [ -d "$fileFolder/node_modules" ]; then
             rm -rf "$fileFolder/node_modules"
-            echo "${red}${bold}Deleted${end} $fileFolder/${orange}node_modules"${end}
+            echo "${lRD}${Bold}Deleted${RSTF} $fileFolder/${lOG}node_modules"${RSTF}
         elif [ -d "$baseFolder/node_modules.nosync" ]; then
             rm -rf "$baseFolder/node_modules.nosync"
-            echo "${red}${bold}Deleted${end} $baseFolder/${orange}node_modules.nosync"${end}
+            echo "${lRD}${Bold}Deleted${RSTF} $baseFolder/${lOG}node_modules.nosync"${RSTF}
         elif [ -d "$fileFolder/node_modules.nosync" ]; then
             rm -rf "$fileFolder/node_modules.nosync"
-            echo "${red}${bold}Deleted${end} $fileFolder/${orange}node_modules.nosync"${end}
+            echo "${lRD}${Bold}Deleted${RSTF} $fileFolder/${lOG}node_modules.nosync"${RSTF}
         fi
         if [ -d "$fileFolder" ] && [ "$(ls $fileFolder)" ]; then
             checkFolder $fileFolder
@@ -34,4 +36,4 @@ checkFolder() {
 
 dir="`pwd`"
 checkFolder $dir
-echo ${green}All Good
+echo ${lGN}All Good
