@@ -87,21 +87,20 @@
   ```Bash
     RST=$'\e[39m'       # reset
     BK=$'\e[38;5;0m'    # black
-    RD=$'\e[38;5;1m'    # red
-    GN=$'\e[38;5;22m'   # green
-    YL=$'\e[38;5;3m'    # yellow
-    BL=$'\e[38;5;21m'   # blue
-    M=$'\e[38;5;13m'    # magenta
-    C=$'\e[38;5;6m'     # cyan
-    OG=$'\e[38;5;172m'  # orange
+    BL=$'\e[38;5;27m'   # blue
+    GY=$'\e[38;5;240m'  # gray
+    GN=$'\e[38;5;34m'   # green
+    M=$'\e[38;5;213m'   # magenta
+    OG=$'\e[38;5;166m'  # orange
+    RD=$'\e[38;5;196m'  # red
+    YL=$'\e[38;5;184m'  # yellow
+    lBL=$'\e[38;5;117m' # light blue
     lGY=$'\e[38;5;250m' # light gray
-    dGY=$'\e[38;5;240m' # dark gray
-    lRD=$'\e[38;5;197m' # light red
     lGN=$'\e[38;5;2m'   # light green
-    lYL=$'\e[38;5;11m'  # light yellow
-    lBL=$'\e[38;5;33m'  # light blue
-    lM=$'\e[38;5;213m'  # light magenta
-    lCY=$'\e[38;5;80m'  # light cyan
+    lM=$'\e[38;5;219m'  # light magenta
+    lOG=$'\e[38;5;172m' # light orange
+    lRD=$'\e[38;5;1m'   # light red
+    lYL=$'\e[38;5;227m' # light yellow
     WHT=$'\e[38;5;15m'  # white
   ```
 
