@@ -5,21 +5,21 @@
 
 tput reset
 
-dir="`pwd`"
+DIR="`pwd`"
 RSTC=$'\e[39m'      # reset color
-GY=$'\e[38;5;240m'  # gray
-lGN=$'\e[38;5;2m'   # light green
-lRD=$'\e[38;5;1m'   # light red
+CGY=$'\e[38;5;240m'  # gray
+CLGN=$'\e[38;5;2m'   # light green
+CLRD=$'\e[38;5;1m'   # light red
 RSTF=$'\e[0m'
 Bold=$'\e[1m'
 mode='single-folder'
 
 echoFolderName() {
     if [ "$mode" = "single-folder" ]; then
-        echo "${lRD}Modified/Untracked"
+        echo "${CLRD}Modified/Untracked"
     else if
-        # echo "${lRD}Modified/Untracked --> ${1##*/}${RST}"
-        echo "${lRD}${Bold}——————› ${1##*/}${RSTF}${RST}"
+        # echo "${CLRD}Modified/Untracked --> ${1##*/}${RST}"
+        echo "${CLRD}${Bold}——————› ${1##*/}${RSTF}${RST}"
     fi
 }
 
@@ -50,17 +50,17 @@ gitStatus() {
             fi
 
             if [ $unpushedCommit -eq 1 ]; then
-                echo "${lGN}   $unpushedCommit Unpushed Commit"
+                echo "${CLGN}   $unpushedCommit Unpushed Commit"
             else
-                echo "${lGN}   $unpushedCommit Unpushed Commits"
+                echo "${CLGN}   $unpushedCommit Unpushed Commits"
             fi
         fi
 
         # if [ $statusFlag -eq 0 ]; then
         #     if [ "$mode" = "single-folder" ]; then
-        #         echo "${GY}Nothing to Commit"
+        #         echo "${CGY}Nothing to Commit"
         #     else if
-        #         echo "${GY}Nothing to Commit  --> ${1##*/}${RST}"
+        #         echo "${CGY}Nothing to Commit  --> ${1##*/}${RST}"
         #     fi
         # fi
 
@@ -69,9 +69,9 @@ gitStatus() {
     fi
 }
 
-gitStatus $dir/
+gitStatus $DIR/
 
-for f in $dir/*
+for f in $DIR/*
 do
     mode='nested-folder'
     gitStatus $f

@@ -4,7 +4,7 @@
 # https://github.com/Roger-Takeshita/Shell-Script
 
 RSTC=$'\e[39m'      # reset color
-lOG=$'\e[38;5;215m' # light orange
+CLOG=$'\e[38;5;215m' # light orange
 
 app=$@
 foundApp=$(ls "/Applications/" | grep -i "$app")
@@ -12,5 +12,5 @@ foundApp=$(ls "/Applications/" | grep -i "$app")
 if [ "$foundApp" != "" ]; then
     open -n -a "$foundApp"
 else
-    echo "Unable to find application named ${lOG}$app${RSTC}"
+    echo "Unable to find application named ${CLOG}${app}${RSTC}"
 fi

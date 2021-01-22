@@ -85,23 +85,23 @@
     ```
 
   ```Bash
-    RSTC=$'\e[39m'      # reset color
-    BK=$'\e[38;5;0m'    # black
-    BL=$'\e[38;5;27m'   # blue
-    GY=$'\e[38;5;240m'  # gray
-    GN=$'\e[38;5;34m'   # green
-    M=$'\e[38;5;213m'   # magenta
-    OG=$'\e[38;5;166m'  # orange
-    RD=$'\e[38;5;196m'  # red
-    YL=$'\e[38;5;184m'  # yellow
-    lBL=$'\e[38;5;117m' # light blue
-    lGY=$'\e[38;5;250m' # light gray
-    lGN=$'\e[38;5;2m'   # light green
-    lM=$'\e[38;5;219m'  # light magenta
-    lOG=$'\e[38;5;215m' # light orange
-    lRD=$'\e[38;5;1m'   # light red
-    lYL=$'\e[38;5;228m' # light yellow
-    WHT=$'\e[38;5;15m'  # white
+    RSTC=$'\e[39m'       # reset color
+    CBK=$'\e[38;5;0m'    # black
+    CBL=$'\e[38;5;27m'   # blue
+    CGY=$'\e[38;5;240m'  # gray
+    CGN=$'\e[38;5;34m'   # green
+    CM=$'\e[38;5;213m'   # magenta
+    COG=$'\e[38;5;166m'  # orange
+    CRD=$'\e[38;5;196m'  # red
+    CYL=$'\e[38;5;184m'  # yellow
+    CWHT=$'\e[38;5;15m'  # white
+    CLBL=$'\e[38;5;117m' # light blue
+    CLGY=$'\e[38;5;250m' # light gray
+    CLGN=$'\e[38;5;2m'   # light green
+    CLM=$'\e[38;5;219m'  # light magenta
+    CLOG=$'\e[38;5;215m' # light orange
+    CLRD=$'\e[38;5;1m'   # light red
+    CLYL=$'\e[38;5;228m' # light yellow
   ```
 
 - **Formatting**
