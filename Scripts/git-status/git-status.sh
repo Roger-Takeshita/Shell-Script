@@ -3,10 +3,10 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-tput reset
+# tput reset
 
 DIR="`pwd`"
-RSTC=$'\e[39m'      # reset color
+RSTC=$'\e[39m'       # reset color
 CGY=$'\e[38;5;240m'  # gray
 CLGN=$'\e[38;5;2m'   # light green
 CLRD=$'\e[38;5;1m'   # light red

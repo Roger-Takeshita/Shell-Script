@@ -3,7 +3,7 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-RSTC=$'\e[39m'      # reset color
+RSTC=$'\e[39m'       # reset color
 CLOG=$'\e[38;5;215m' # light orange
 
 app=$@
