@@ -10,6 +10,7 @@ app=$@
 foundApp=$(ls "/Applications/" | grep -i "$app")
 
 if [ "$foundApp" != "" ]; then
+    echo "Opening $foundApp..."
     open -n -a "$foundApp"
 else
     echo "Unable to find application named ${CLOG}${app}${RSTC}"
