@@ -11,31 +11,63 @@ DIR=`pwd`
 
 PACKAGE_VERSION=$(grep -m1 version ${DIR}/package.json | awk -F: '{ print $2 }' | sed 's/[", ]//g')
 
-if [[ $PACKAGE_VERSION =~ ([0-9]+).([0-9]+).([0-9]+) ]]; then
-  MAJOR=${BASH_REMATCH[1]}
-  MINOR=${BASH_REMATCH[2]}
-  TINY=${BASH_REMATCH[3]}
-fi
 
-echo -n "Current package.json version: ${CGY}(default ${PACKAGE_VERSION})${RSTC} "
-read VERSION
+function splitVersion() {
+    if [[ $1 =~ ([0-9]+).([0-9]+).([0-9]+) ]]; then
+      MAJOR=${BASH_REMATCH[1]}
+      MINOR=${BASH_REMATCH[2]}
+      TINY=${BASH_REMATCH[3]}
+    fi
+}
 
-if [ "$VERSION" == "" ]; then
-    echo "    Tag version: ${CLGN}${PACKAGE_VERSION}${RSTC}"
-    TAG_EXISTS=`git rev-list ${PACKAGE_VERSION} > /dev/null`
 
-    if [ TAG_EXISTS ]; then
-        echo -n "    ${CLRD}Tag ${CLGN}${PACKAGE_VERSION}${CLRD} already exists, whould you like to bump the version? ${CGY}(y/n) (default y)${RSTC} "
-        read BUMP
+function checkTagExists() {
+    PACKAGE_VERSION=$1
 
-        if [ "$BUMP" == "" ] || [ "$BUMP" == "y" ]; then
-            echo -n "Please enter the new version: ${CGY}(eg. 1.12.0)${RSTC} "
-            read NEW_VERSION
+    if git rev-parse "$PACKAGE_VERSION" >/dev/null 2>&1 ; then
+        echo -n "    ${CLRD}Tag ${CLGN}${PACKAGE_VERSION}${CLRD} already exists.${RSTC}"
+        echo ""
+        return 1
+    fi
+
+    return 0
+}
+
+init() {
+    splitVersion $PACKAGE_VERSION
+
+    echo -n "Current package.json version: ${CGY}(default ${PACKAGE_VERSION})${RSTC} "
+    read VERSION
+
+    if [ "$VERSION" == "" ]; then
+        checkTagExists $PACKAGE_VERSION
+        local TAG_1=$?
+
+        if [ TAG_1 ]; then
+            echo -n "Would you like to bump the version? ${CGY}(y/n) (default y)${RSTC} "
+            read BUMP
+
+            if [ "$BUMP" == "" ] || [ "$BUMP" == "y" ]; then
+                echo -n "Please enter the new version: ${CGY}(eg. 1.0.1)${RSTC} "
+                read NEW_VERSION
+
+                checkTagExists $NEW_VERSION
+                local TAG_2=$?
+
+                if [ $TAG_2 -eq 0 ]; then
+                    splitVersion $NEW_VERSION
+                    echo $MAJOR
+                    echo $MINOR
+                    echo $TINY
+                fi
+            fi
+        else
+            echo All good
         fi
     else
-        echo All good
+        # check if version is greater or equal to current version
+        echo "    Tag version: $PACKAGE_VERSION"
     fi
-else
-    # check if version is greater or equal to current version
-    echo "    Tag version: $PACKAGE_VERSION"
-fi
+}
+
+init
