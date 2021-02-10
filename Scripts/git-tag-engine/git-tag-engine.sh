@@ -15,13 +15,14 @@ BGCGN=$'\e[48;5;34m'  # bg green
 BGCBL=$'\e[48;5;27m'  # bg blue
 
 DIR=$(pwd)
-FILENAME="package.json"
+PACKAGE_JSON_FILENAME="package.json"
+TEACHERSEAT_FILENAME="teacherseat.json"
 
-if [ -f "${DIR}/${FILENAME}" ]; then
-    PACKAGE_VERSION=$(cat ${DIR}/${FILENAME} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
+if [ -f "${DIR}/${PACKAGE_JSON_FILENAME}" ]; then
+    PACKAGE_VERSION=$(cat ${DIR}/${PACKAGE_JSON_FILENAME} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
 else
     echo ""
-    echo "    ${CLBL}${FILENAME}${CLOG} not found.${RSTC}"
+    echo "    ${CLBL}${PACKAGE_JSON_FILENAME}${CLOG} not found.${RSTC}"
     echo "    ${CLOG}Looks like you are trying to run the script outside of your project root path.${RSTC}"
     echo "    ${CLRD}Process aborted!"
     echo ""
@@ -68,16 +69,16 @@ function pushNewTag() {
     if [ "$TAG" != "" ]; then
         echo ""
         echo "    ${CLBL}Previous tag:          ${PACKAGE_VERSION}${RSTC}"
-        echo "    ${CLBL}Previous ${FILENAME}: ${PACKAGE_VERSION}${RSTC}"
+        echo "    ${CLBL}Previous ${PACKAGE_JSON_FILENAME}: ${PACKAGE_VERSION}${RSTC}"
         echo ""
         echo "    ${CLGN}New tag:               ${TAG}${RSTC}"
-        echo "    ${CLGN}New ${FILENAME}:      ${TAG}${RSTC}"
+        echo "    ${CLGN}New ${PACKAGE_JSON_FILENAME}:      ${TAG}${RSTC}"
         echo ""
     else
         TAG=$PACKAGE_VERSION
         echo ""
         echo "    ${CLGN}New tag:               ${TAG}${RSTC}"
-        echo "    ${CLGN}New ${FILENAME}:      ${TAG}${RSTC}"
+        echo "    ${CLGN}New ${PACKAGE_JSON_FILENAME}:      ${TAG}${RSTC}"
         echo ""
     fi
 
@@ -86,12 +87,17 @@ function pushNewTag() {
     local CONFIRM=$(echo $ANSWER2 | tr [:upper:] [:lower:])
 
     if [ "${CONFIRM}" == "" ] || [ "${CONFIRM}" == "y" ] || [ "${CONFIRM}" == "yes" ]; then
-        $(cat ${DIR}/${FILENAME} | sed -e s/\"${PACKAGE_VERSION}\"/\"${TAG}\"/g > ${DIR}/NEW_${FILENAME})
-        $(rm ${DIR}/${FILENAME})
-        $(mv ${DIR}/NEW_${FILENAME} ${DIR}/${FILENAME})
-        echo "${CGY}$(npm install)"
-        echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
-        echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
+        $(cat ${DIR}/${PACKAGE_JSON_FILENAME} | sed -e s/\"${PACKAGE_VERSION}\"/\"${TAG}\"/g > ${DIR}/NEW_${PACKAGE_JSON_FILENAME})
+        $(rm ${DIR}/${PACKAGE_JSON_FILENAME})
+        $(mv ${DIR}/NEW_${PACKAGE_JSON_FILENAME} ${DIR}/${PACKAGE_JSON_FILENAME})
+        # cat teacherseat.json | sed 's/\(\"major\"[:]\) \([0-9]*\)/\1 NEW_MAJOR/' | sed 's/\(\"minor\"[:]\) \([0-9]*\)/\1 NEW_MINOR/' | sed 's/\(\"patch\"[:]\) \([0-9]*\)/\1 NEW_PATCH/' |  sed 's/\(\"type\"[:]\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"NEW_TYPE\"/' | sed 's/\(\"version\"[:]\) \([0-9]*$\)/\1 NEW_TYPE_VERSION/'
+        # $(cat teacherseat.json | sed 's/\(\"major\"[:]\) \([0-9]*\)/\1 NEW_MAJOR/' | sed 's/\(\"minor\"[:]\) \([0-9]*\)/\1 NEW_MINOR/' | sed 's/\(\"patch\"[:]\) \([0-9]*\)/\1 NEW_PATCH/' |  sed 's/\(\"type\"[:]\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"NEW_TYPE\"/' | sed 's/\(\"version\"[:]\) \([0-9]*$\)/\1 NEW_TYPE_VERSION/')
+        echo $(cat teacherseat.json | sed s/\(\"major\"[:]\) \([0-9]*\)/\1 ${MAJOR}/)
+        # $(rm ${DIR}/${TEACHERSEAT_FILENAME})
+        # $(mv ${DIR}/NEW_${TEACHERSEAT_FILENAME} ${DIR}/${TEACHERSEAT_FILENAME})
+        # echo "${CGY}$(npm install)"
+        # echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
+        # echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
         echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${TAG}${RSTC}${BGRSTC}"
         echo ""
     else
@@ -104,7 +110,7 @@ function pushNewTag() {
 function init() {
     splitVersion $PACKAGE_VERSION
 
-    echo -n "Current ${FILENAME} version: ${CGY}(${PACKAGE_VERSION})${RSTC} "
+    echo -n "Current ${PACKAGE_JSON_FILENAME} version: ${CGY}(${PACKAGE_VERSION})${RSTC} "
     read VERSION
 
     if [ "$VERSION" == "" ]; then
