@@ -17,8 +17,7 @@ mode='single-folder'
 echoFolderName() {
     if [ "$mode" = "single-folder" ]; then
         echo "${CLRD}Modified/Untracked"
-    else if
-        # echo "${CLRD}Modified/Untracked --> ${1##*/}${RST}"
+    else
         echo "${CLRD}${Bold}——————› ${1##*/}${RSTF}${RST}"
     fi
 }
@@ -65,7 +64,7 @@ gitStatus() {
         # fi
 
         git status -s
-        cd ../
+        cd ..
     fi
 }
 
