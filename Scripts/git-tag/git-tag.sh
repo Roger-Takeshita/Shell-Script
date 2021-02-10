@@ -22,10 +22,10 @@ function splitVersion() {
 
 
 function checkTagExists() {
-    PACKAGE_VERSION=$1
+    PKG_VERSION=$1
 
-    if git rev-parse "$PACKAGE_VERSION" >/dev/null 2>&1 ; then
-        echo -n "    ${CLRD}Tag ${CLGN}${PACKAGE_VERSION}${CLRD} already exists.${RSTC}"
+    if git rev-parse $PKG_VERSION >/dev/null 2>&1 ; then
+        echo -n "    ${CLRD}Tag ${CLGN}${PKG_VERSION}${CLRD} already exists.${RSTC}"
         echo ""
         return 1
     fi
@@ -36,6 +36,7 @@ function checkTagExists() {
 init() {
     splitVersion $PACKAGE_VERSION
 
+    echo ""
     echo -n "Current package.json version: ${CGY}(default ${PACKAGE_VERSION})${RSTC} "
     read VERSION
 
@@ -56,10 +57,17 @@ init() {
 
                 if [ $TAG_2 -eq 0 ]; then
                     splitVersion $NEW_VERSION
-                    echo $MAJOR
-                    echo $MINOR
-                    echo $TINY
+
+                    echo $(cat ${DIR}/package.json | sed -e s/\"${PACKAGE_VERSION}\"/\"${NEW_VERSION}\"/g > ${DIR}/package1.json)
+                    $(rm ${DIR}/package.json)
+                    $(mv ${DIR}/package1.json ${DIR}/package.json)
+                    git add . ; git commit -m "bump tag ${NEW_VERSION}" ; git push
+                    git tag ${NEW_VERSION} ; git push origin --tags
                 fi
+            else
+                echo "    ${CLRD}Process aborted!"
+                echo ""
+                exit
             fi
         else
             echo All good
