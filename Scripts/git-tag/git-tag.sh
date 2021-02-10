@@ -18,7 +18,7 @@ DIR=$(pwd)
 FILENAME="package.json"
 
 if [ -f "${DIR}/${FILENAME}" ]; then
-    PACKAGE_VERSION=$(grep -m1 version ${DIR}/${FILENAME} | awk -F: '{ print $2 }' | sed 's/[", ]//g')
+    PACKAGE_VERSION=$(cat ${DIR}/${FILENAME} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
 else
     echo ""
     echo "    ${CLBL}${FILENAME}${CLOG} not found.${RSTC}"
