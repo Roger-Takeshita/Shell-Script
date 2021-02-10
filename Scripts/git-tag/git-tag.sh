@@ -89,9 +89,9 @@ function pushNewTag() {
         $(cat ${DIR}/${FILENAME} | sed -e s/\"${PACKAGE_VERSION}\"/\"${TAG}\"/g > ${DIR}/NEW_${FILENAME})
         $(rm ${DIR}/${FILENAME})
         $(mv ${DIR}/NEW_${FILENAME} ${DIR}/${FILENAME})
-        # echo "${CGY}$(npm install)"
-        # echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
-        # echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
+        echo "${CGY}$(npm install)"
+        echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
+        echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
         echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${TAG}${RSTC}${BGRSTC}"
         echo ""
     else
