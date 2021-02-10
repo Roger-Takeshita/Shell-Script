@@ -7,10 +7,9 @@ CLGN=$'\e[38;5;2m'   # light green
 CLOG=$'\e[38;5;215m' # light orange
 CLRD=$'\e[38;5;1m'   # light red
 CLYL=$'\e[38;5;228m' # light yellow
-DIR=`pwd`
+DIR=$(pwd)
 
 PACKAGE_VERSION=$(grep -m1 version ${DIR}/package.json | awk -F: '{ print $2 }' | sed 's/[", ]//g')
-
 
 function splitVersion() {
     if [[ $1 =~ ([0-9]+).([0-9]+).([0-9]+) ]]; then
@@ -20,12 +19,13 @@ function splitVersion() {
     fi
 }
 
-
 function checkTagExists() {
-    PKG_VERSION=$1
+    local TAG=$1
 
-    if git rev-parse $PKG_VERSION >/dev/null 2>&1 ; then
-        echo -n "    ${CLRD}Tag ${CLGN}${PKG_VERSION}${CLRD} already exists.${RSTC}"
+    if git rev-parse $TAG >/dev/null 2>&1 ; then
+        echo "    ${CLRD}Tag ${CLGN}${TAG}${CLRD} already exists.${RSTC}"
+        TAGS=$(git tag | sed -e 's/\n/ /g' | tr '\r\n' ' ')
+        echo "    ${CGY}Existing tags: ${TAGS}${RSTC}"
         echo ""
         return 1
     fi
@@ -33,22 +33,49 @@ function checkTagExists() {
     return 0
 }
 
-init() {
+function pushNewTag() {
+    local TAG=$1
+    splitVersion $TAG
+
+    echo ""
+    echo "    ${CGY}package.json Version: ${TAG}${RSTC}"
+    echo "    ${CGY}Tag Version:          ${TAG}${RSTC}"
+    echo ""
+
+    echo -n "Are you sure you want to bump the version? ${CGY}(y/n)${RSTC} "
+    read ANSWER2
+    local CONFIRM=$(echo $ANSWER2 | tr [:upper:] [:lower:])
+
+    if [ "${CONFIRM}" == "" ] || [ "${CONFIRM}" == "y" ] || [ "${CONFIRM}" == "yes" ]; then
+        $(cat ${DIR}/package.json | sed -e s/\"${PACKAGE_VERSION}\"/\"${TAG}\"/g > ${DIR}/package1.json)
+        $(rm ${DIR}/package.json)
+        $(mv ${DIR}/package1.json ${DIR}/package.json)
+        git add . ; git commit -m "bump tag ${TAG}" ; git push
+        git tag ${TAG} ; git push origin --tags
+    else
+        echo "    ${CLRD}Process aborted!"
+        echo ""
+    fi
+
+}
+
+function init() {
     splitVersion $PACKAGE_VERSION
 
     echo ""
-    echo -n "Current package.json version: ${CGY}(default ${PACKAGE_VERSION})${RSTC} "
+    echo -n "Current package.json version: ${CGY}(${PACKAGE_VERSION})${RSTC} "
     read VERSION
 
     if [ "$VERSION" == "" ]; then
         checkTagExists $PACKAGE_VERSION
         local TAG_1=$?
 
-        if [ TAG_1 ]; then
-            echo -n "Would you like to bump the version? ${CGY}(y/n) (default y)${RSTC} "
-            read BUMP
+        if [ $TAG_1 ]; then
+            echo -n "Would you like to bump the version? ${CGY}(y/n)${RSTC} "
+            read ANSWER1
+            local BUMP=$(echo $ANSWER1 | tr [:upper:] [:lower:])
 
-            if [ "$BUMP" == "" ] || [ "$BUMP" == "y" ]; then
+            if [ "${BUMP}" == "" ] || [ "${BUMP}" == "y" ] || [ "${BUMP}" == "yes" ]; then
                 echo -n "Please enter the new version: ${CGY}(eg. 1.0.1)${RSTC} "
                 read NEW_VERSION
 
@@ -56,13 +83,7 @@ init() {
                 local TAG_2=$?
 
                 if [ $TAG_2 -eq 0 ]; then
-                    splitVersion $NEW_VERSION
-
-                    echo $(cat ${DIR}/package.json | sed -e s/\"${PACKAGE_VERSION}\"/\"${NEW_VERSION}\"/g > ${DIR}/package1.json)
-                    $(rm ${DIR}/package.json)
-                    $(mv ${DIR}/package1.json ${DIR}/package.json)
-                    git add . ; git commit -m "bump tag ${NEW_VERSION}" ; git push
-                    git tag ${NEW_VERSION} ; git push origin --tags
+                    pushNewTag $NEW_VERSION
                 fi
             else
                 echo "    ${CLRD}Process aborted!"
@@ -73,8 +94,12 @@ init() {
             echo All good
         fi
     else
-        # check if version is greater or equal to current version
-        echo "    Tag version: $PACKAGE_VERSION"
+        checkTagExists $VERSION
+        local TAG_3=$?
+
+        if [ $TAG_3 -eq 0 ]; then
+            pushNewTag $VERSION
+        fi
     fi
 }
 
