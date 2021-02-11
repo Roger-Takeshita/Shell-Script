@@ -13,6 +13,8 @@ CLRD=$'\e[38;5;1m'    # light red
 BGRSTC=$'\e[49m'      # bg reset color
 BGCGN=$'\e[48;5;34m'  # bg green
 BGCBL=$'\e[48;5;27m'  # bg blue
+RSTF=$'\e[0m'         # reset format
+UNDER=$'\e[4m'        # underline
 
 DIR=$(pwd)
 PACKAGE_JSON_FILENAME="package.json"
@@ -69,14 +71,14 @@ function checkTagExists() {
 }
 
 function updateRelease() {
-    echo -n "Please enter ${TEACHERSEAT_FILENAME} release type: ${CGY}(${RELEASE})${RSTC} "
+    echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release type${RSTF}: ${CGY}(${RELEASE})${RSTC} "
     read NEW_RELEASE
 
     if [ "$NEW_RELEASE" == "" ]; then
         NEW_RELEASE=$RELEASE
     fi
 
-    echo -n "Please enter ${TEACHERSEAT_FILENAME} release version: ${CGY}(${RELEASE_VERSION})${RSTC} "
+    echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release version${RSTF}: ${CGY}(${RELEASE_VERSION})${RSTC} "
     read NEW_RELEASE_VERSION
 
     if [ "$NEW_RELEASE_VERSION" == "" ]; then
@@ -91,29 +93,29 @@ function pushNewTag() {
     if [ "$TAG" != "" ]; then
         echo ""
         echo "    ${CLBL}PREVIOUS:${RSTC}"
-        echo "    ${CLBL}   tag:                              ${PACKAGE_VERSION}${RSTC}"
-        echo "    ${CLBL}   ${PACKAGE_JSON_FILENAME} version:             ${PACKAGE_VERSION}${RSTC}"
-        echo "    ${CLBL}   ${TEACHERSEAT_FILENAME} release type:    ${RELEASE}${RSTC}"
-        echo "    ${CLBL}   ${TEACHERSEAT_FILENAME} release version: ${RELEASE_VERSION}${RSTC}"
+        echo "    ${CLBL}    Tag version:                       ${PACKAGE_VERSION}${RSTC}"
+        echo "    ${CLBL}    ${PACKAGE_JSON_FILENAME} version:              ${PACKAGE_VERSION}${RSTC}"
+        echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release type:     ${RELEASE}${RSTC}"
+        echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release version:  ${RELEASE_VERSION}${RSTC}"
         echo ""
         echo "    ${CLGN}NEW:${RSTC}"
-        echo "    ${CLGN}   tag:                              ${TAG}${RSTC}"
-        echo "    ${CLGN}   ${PACKAGE_JSON_FILENAME}:                     ${TAG}${RSTC}"
-        echo "    ${CLGN}   ${TEACHERSEAT_FILENAME} release type:    ${NEW_RELEASE}${RSTC}"
-        echo "    ${CLGN}   ${TEACHERSEAT_FILENAME} release version: ${NEW_RELEASE_VERSION}${RSTC}"
+        echo "    ${CLGN}    Tag version:                       ${TAG}${RSTC}"
+        echo "    ${CLGN}    ${PACKAGE_JSON_FILENAME} version:              ${TAG}${RSTC}"
+        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release type:     ${NEW_RELEASE}${RSTC}"
+        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release version:  ${NEW_RELEASE_VERSION}${RSTC}"
         echo ""
     else
         TAG=$PACKAGE_VERSION
         echo ""
         echo "    ${CLGN}New:${RSTC}"
-        echo "    ${CLGN}   tag:                              ${TAG}${RSTC}"
-        echo "    ${CLGN}   ${PACKAGE_JSON_FILENAME} version:             ${TAG}${RSTC}"
-        echo "    ${CLGN}   ${TEACHERSEAT_FILENAME} release type:    ${NEW_RELEASE}${RSTC}"
-        echo "    ${CLGN}   ${TEACHERSEAT_FILENAME} release version: ${NEW_RELEASE_VERSION}${RSTC}"
+        echo "    ${CLGN}    Tag version:                       ${TAG}${RSTC}"
+        echo "    ${CLGN}    ${PACKAGE_JSON_FILENAME} version:              ${TAG}${RSTC}"
+        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release type:     ${NEW_RELEASE}${RSTC}"
+        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release version:  ${NEW_RELEASE_VERSION}${RSTC}"
         echo ""
     fi
 
-    echo -n "Are you sure you want to bump the version? ${CGY}(y/n)${RSTC} "
+    echo -n "Are you sure you want to bump the ${UNDER}version${RSTF}? ${CGY}(y/n)${RSTC} "
     read ANSWER2
     local CONFIRM=$(echo $ANSWER2 | tr [:upper:] [:lower:])
 
@@ -121,17 +123,12 @@ function pushNewTag() {
         $(cat ${DIR}/${PACKAGE_JSON_FILENAME} | sed -e s/\"${PACKAGE_VERSION}\"/\"${TAG}\"/g > ${DIR}/NEW_${PACKAGE_JSON_FILENAME})
         $(rm ${DIR}/${PACKAGE_JSON_FILENAME})
         $(mv ${DIR}/NEW_${PACKAGE_JSON_FILENAME} ${DIR}/${PACKAGE_JSON_FILENAME})
-        cat "${DIR}/${TEACHERSEAT_FILENAME}" | sed -e "s/\(\"major\":\) \([0-9]*\)/\1 ${MAJOR}/" \
-                                             --| sed -e "s/\(\"minor\":\) \([0-9]*\)/\1 ${MINOR}/" \
-                                             --| sed -e "s/\(\"patch\":\) \([0-9]*\)/\1 ${PATCH}/" \
-                                             --| sed -e "s/\(\"type\":\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"${NEW_RELEASE}\"/" /
-                                             --| sed -e "s/\(\"version\":\) \([0-9]*$\)/\1 ${NEW_RELEASE_VERSION}/" /
-                                             --> "${DIR}/NEW_${TEACHERSEAT_FILENAME}"
+        cat "${DIR}/${TEACHERSEAT_FILENAME}" | sed -e "s/\(\"major\":\) \([0-9]*\)/\1 ${MAJOR}/" | sed -e "s/\(\"minor\":\) \([0-9]*\)/\1 ${MINOR}/" | sed -e "s/\(\"patch\":\) \([0-9]*\)/\1 ${PATCH}/" | sed -e "s/\(\"type\":\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"${NEW_RELEASE}\"/" | sed -e "s/\(\"version\":\) \([0-9]*$\)/\1 ${NEW_RELEASE_VERSION}/" > "${DIR}/NEW_${TEACHERSEAT_FILENAME}"
         $(rm ${DIR}/${TEACHERSEAT_FILENAME})
         $(mv ${DIR}/NEW_${TEACHERSEAT_FILENAME} ${DIR}/${TEACHERSEAT_FILENAME})
-        # echo "${CGY}$(npm install)"
-        # echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
-        # echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
+        echo "${CGY}$(npm install)"
+        echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
+        echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
         echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${TAG}${RSTC}${BGRSTC}"
         echo ""
     else
@@ -144,7 +141,7 @@ function pushNewTag() {
 function init() {
     splitVersion $PACKAGE_VERSION
 
-    echo -n "Please enter ${PACKAGE_JSON_FILENAME} version: ${CGY}(${PACKAGE_VERSION})${RSTC} "
+    echo -n "Please enter ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_VERSION})${RSTC} "
     read VERSION
 
     if [ "$VERSION" == "" ]; then
@@ -152,13 +149,13 @@ function init() {
         local TAG_1=$?
 
         if [ $TAG_1 -eq 1 ]; then
-            echo -n "Would you like to bump the version? ${CGY}(y/n)${RSTC} "
+            echo -n "Would you like to bump the ${UNDER}version${RSTF}? ${CGY}(y/n)${RSTC} "
             read ANSWER1
             local BUMP=$(echo $ANSWER1 | tr [:upper:] [:lower:])
 
             if [ "${BUMP}" == "" ] || [ "${BUMP}" == "y" ] || [ "${BUMP}" == "yes" ]; then
                 while [ "$NEW_VERSION" == "" ] || [ $TAG_2 -eq 1 ]; do
-                    echo -n "Please enter version different from ${CLBL}${PACKAGE_VERSION}${RSTC}: "
+                    echo -n "Please enter a new ${UNDER}version${RSTF} different from ${CLBL}${PACKAGE_VERSION}${RSTC}: "
                     read NEW_VERSION
                     checkTagExists $NEW_VERSION
                     local TAG_2=$?
