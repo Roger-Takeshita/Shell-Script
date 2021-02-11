@@ -32,13 +32,13 @@ function notFoundFileMsg() {
 
 function checkIfFileExists() {
     if [ -f "${DIR}/${PACKAGE_JSON_FILENAME}" ]; then
-        PACKAGE_VERSION=$(cat ${DIR}/${PACKAGE_JSON_FILENAME} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
+        PACKAGE_JSON_VERSION=$(cat ${DIR}/${PACKAGE_JSON_FILENAME} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
     else
         notFoundFileMsg $PACKAGE_JSON_FILENAME
     fi
 
     if [ -f "${DIR}/${TEACHERSEAT_FILENAME}" ]; then
-        RELEASE=$(cat ${DIR}/${TEACHERSEAT_FILENAME} | grep type | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs )
+        RELEASE_TYPE=$(cat ${DIR}/${TEACHERSEAT_FILENAME} | grep type | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs )
         RELEASE_VERSION=$(grep '"version": [0-9]*$' ${DIR}/${TEACHERSEAT_FILENAME} | sed -e "s/\(\"version\":\) \([0-9]*$\)/\2/" | xargs)
     else
         notFoundFileMsg $TEACHERSEAT_FILENAME
@@ -56,13 +56,16 @@ function splitVersion() {
 function checkTagExists() {
     local TAG=$(echo $1 | xargs)
 
-    if [ "$TAG" != "" ] && git rev-parse $TAG >/dev/null 2>&1 ; then
+    if [ "$TAG" == "" ]; then
+        TAG=$PACKAGE_JSON_VERSION
+    fi
+
+    if git rev-parse $TAG >/dev/null 2>&1 ; then
         echo ""
         echo "    ${CLRD}Tag ${CLBL}${TAG}${CLRD} already exists${RSTC}"
         echo ""
         # TAGS=$(git tag | sed -e 's/\n/ /g' | tr '\r\n' ' ')
         # echo "    ${CGY}Existing tags: ${TAGS}${RSTC}"
-        PACKAGE_VERSION=$TAG
 
         return 1
     fi
@@ -71,11 +74,11 @@ function checkTagExists() {
 }
 
 function updateRelease() {
-    echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release type${RSTF}: ${CGY}(${RELEASE})${RSTC} "
-    read NEW_RELEASE
+    echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release type${RSTF}: ${CGY}(${RELEASE_TYPE})${RSTC} "
+    read NEW_RELEASE_TYPE
 
-    if [ "$NEW_RELEASE" == "" ]; then
-        NEW_RELEASE=$RELEASE
+    if [ "$NEW_RELEASE_TYPE" == "" ]; then
+        NEW_RELEASE_TYPE=$RELEASE_TYPE
     fi
 
     echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release version${RSTF}: ${CGY}(${RELEASE_VERSION})${RSTC} "
@@ -86,50 +89,48 @@ function updateRelease() {
     fi
 }
 
-function pushNewTag() {
-    local TAG=$1
-    splitVersion $TAG
+function printSummary() {
+    local OLD_TAG=$1
+    local NEW_TAG=$2
 
-    if [ "$TAG" != "" ]; then
+    if [ "$OLD_TAG" != "$NEW_TAG" ]; then
         echo ""
         echo "    ${CLBL}PREVIOUS:${RSTC}"
-        echo "    ${CLBL}    Tag version:                       ${PACKAGE_VERSION}${RSTC}"
-        echo "    ${CLBL}    ${PACKAGE_JSON_FILENAME} version:              ${PACKAGE_VERSION}${RSTC}"
-        echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release type:     ${RELEASE}${RSTC}"
+        echo "    ${CLBL}    Tag version:                       ${OLD_TAG}${RSTC}"
+        echo "    ${CLBL}    ${PACKAGE_JSON_FILENAME} version:              ${OLD_TAG}${RSTC}"
+        echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release type:     ${RELEASE_TYPE}${RSTC}"
         echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release version:  ${RELEASE_VERSION}${RSTC}"
-        echo ""
-        echo "    ${CLGN}NEW:${RSTC}"
-        echo "    ${CLGN}    Tag version:                       ${TAG}${RSTC}"
-        echo "    ${CLGN}    ${PACKAGE_JSON_FILENAME} version:              ${TAG}${RSTC}"
-        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release type:     ${NEW_RELEASE}${RSTC}"
-        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release version:  ${NEW_RELEASE_VERSION}${RSTC}"
-        echo ""
-    else
-        TAG=$PACKAGE_VERSION
-        echo ""
-        echo "    ${CLGN}New:${RSTC}"
-        echo "    ${CLGN}    Tag version:                       ${TAG}${RSTC}"
-        echo "    ${CLGN}    ${PACKAGE_JSON_FILENAME} version:              ${TAG}${RSTC}"
-        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release type:     ${NEW_RELEASE}${RSTC}"
-        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release version:  ${NEW_RELEASE_VERSION}${RSTC}"
-        echo ""
     fi
 
+    echo ""
+    echo "    ${CLGN}NEW:${RSTC}"
+    echo "    ${CLGN}    Tag version:                       ${NEW_TAG}${RSTC}"
+    echo "    ${CLGN}    ${PACKAGE_JSON_FILENAME} version:              ${NEW_TAG}${RSTC}"
+    echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release type:     ${NEW_RELEASE_TYPE}${RSTC}"
+    echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release version:  ${NEW_RELEASE_VERSION}${RSTC}"
+    echo ""
+}
+
+function pushNewTag() {
+    local OLD_TAG=$1
+    local NEW_TAG=$2
+    splitVersion $NEW_TAG
+
     echo -n "Are you sure you want to bump the ${UNDER}version${RSTF}? ${CGY}(y/n)${RSTC} "
-    read ANSWER2
-    local CONFIRM=$(echo $ANSWER2 | tr [:upper:] [:lower:])
+    read ANSWER
+    local CONFIRM=$(echo $ANSWER | tr [:upper:] [:lower:])
 
     if [ "${CONFIRM}" == "" ] || [ "${CONFIRM}" == "y" ] || [ "${CONFIRM}" == "yes" ]; then
-        $(cat ${DIR}/${PACKAGE_JSON_FILENAME} | sed -e s/\"${PACKAGE_VERSION}\"/\"${TAG}\"/g > ${DIR}/NEW_${PACKAGE_JSON_FILENAME})
+        $(cat ${DIR}/${PACKAGE_JSON_FILENAME} | sed -e s/\"${OLD_TAG}\"/\"${NEW_TAG}\"/g > ${DIR}/NEW_${PACKAGE_JSON_FILENAME})
         $(rm ${DIR}/${PACKAGE_JSON_FILENAME})
         $(mv ${DIR}/NEW_${PACKAGE_JSON_FILENAME} ${DIR}/${PACKAGE_JSON_FILENAME})
-        cat "${DIR}/${TEACHERSEAT_FILENAME}" | sed -e "s/\(\"major\":\) \([0-9]*\)/\1 ${MAJOR}/" | sed -e "s/\(\"minor\":\) \([0-9]*\)/\1 ${MINOR}/" | sed -e "s/\(\"patch\":\) \([0-9]*\)/\1 ${PATCH}/" | sed -e "s/\(\"type\":\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"${NEW_RELEASE}\"/" | sed -e "s/\(\"version\":\) \([0-9]*$\)/\1 ${NEW_RELEASE_VERSION}/" > "${DIR}/NEW_${TEACHERSEAT_FILENAME}"
+        cat "${DIR}/${TEACHERSEAT_FILENAME}" | sed -e "s/\(\"major\":\) \([0-9]*\)/\1 ${MAJOR}/" | sed -e "s/\(\"minor\":\) \([0-9]*\)/\1 ${MINOR}/" | sed -e "s/\(\"patch\":\) \([0-9]*\)/\1 ${PATCH}/" | sed -e "s/\(\"type\":\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"${NEW_RELEASE_TYPE}\"/" | sed -e "s/\(\"version\":\) \([0-9]*$\)/\1 ${NEW_RELEASE_VERSION}/" > "${DIR}/NEW_${TEACHERSEAT_FILENAME}"
         $(rm ${DIR}/${TEACHERSEAT_FILENAME})
         $(mv ${DIR}/NEW_${TEACHERSEAT_FILENAME} ${DIR}/${TEACHERSEAT_FILENAME})
         echo "${CGY}$(npm install)"
-        echo "${CGY}$(git add . ; git commit -m "bump tag to ${TAG}" ; git push)"
-        echo "${CGY}$(git tag ${TAG} ; git push origin --tags)${RSTC}"
-        echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${TAG}${RSTC}${BGRSTC}"
+        echo "${CGY}$(git add . ; git commit -m "bump tag to ${NEW_TAG}" ; git push)"
+        echo "${CGY}$(git tag ${NEW_TAG} ; git push origin --tags)${RSTC}"
+        echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${NEW_TAG}${RSTC}${BGRSTC}"
         echo ""
     else
         echo "    ${CLRD}Process aborted!"
@@ -138,56 +139,38 @@ function pushNewTag() {
 
 }
 
-function init() {
-    splitVersion $PACKAGE_VERSION
+function tagLoop() {
+    local TAG_EXISTS=$1
 
-    echo -n "Please enter ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_VERSION})${RSTC} "
-    read VERSION
+    while [ $TAG_EXISTS -eq 1 ]; do
+        echo -n "Please enter ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_JSON_VERSION})${RSTC} "
+        read NEW_TAG_VERSION_AGAIN
+        checkTagExists $NEW_TAG_VERSION_AGAIN
+        TAG_EXISTS=$?
+    done
 
-    if [ "$VERSION" == "" ]; then
-        checkTagExists $PACKAGE_VERSION
-        local TAG_1=$?
-
-        if [ $TAG_1 -eq 1 ]; then
-            echo -n "Would you like to bump the ${UNDER}version${RSTF}? ${CGY}(y/n)${RSTC} "
-            read ANSWER1
-            local BUMP=$(echo $ANSWER1 | tr [:upper:] [:lower:])
-
-            if [ "${BUMP}" == "" ] || [ "${BUMP}" == "y" ] || [ "${BUMP}" == "yes" ]; then
-                while [ "$NEW_VERSION" == "" ] || [ $TAG_2 -eq 1 ]; do
-                    echo -n "Please enter a new ${UNDER}version${RSTF} different from ${CLBL}${PACKAGE_VERSION}${RSTC}: "
-                    read NEW_VERSION
-                    checkTagExists $NEW_VERSION
-                    local TAG_2=$?
-                done
-
-                if [ $TAG_2 -eq 0 ]; then
-                    updateRelease
-                    pushNewTag $NEW_VERSION
-                fi
-            else
-                echo "    ${CLRD}Process aborted!"
-                echo ""
-                exit
-            fi
-        else
-            checkTagExists $VERSION
-            local TAG_3=$?
-
-            if [ $TAG_3 -eq 0 ]; then
-                updateRelease
-                pushNewTag $VERSION
-            fi
-        fi
-    else
-        checkTagExists $VERSION
-        local TAG_4=$?
-
-        if [ $TAG_4 -eq 0 ]; then
-            updateRelease
-            pushNewTag $VERSION
-        fi
+    if [ "$NEW_TAG_VERSION_AGAIN" != "" ]; then
+        NEW_TAG_VERSION=$NEW_TAG_VERSION_AGAIN
     fi
+}
+
+function init() {
+    splitVersion $PACKAGE_JSON_VERSION
+
+    echo -n "Please enter ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_JSON_VERSION})${RSTC} "
+    read NEW_TAG_VERSION
+
+    if [ "$NEW_TAG_VERSION" == "" ]; then
+        NEW_TAG_VERSION=$PACKAGE_JSON_VERSION
+    fi
+
+    checkTagExists $NEW_TAG_VERSION
+    TAG_EXISTS=$?
+
+    tagLoop $TAG_EXISTS
+    updateRelease
+    printSummary $PACKAGE_JSON_VERSION $NEW_TAG_VERSION
+    pushNewTag $PACKAGE_JSON_VERSION $NEW_TAG_VERSION
 }
 
 checkIfFileExists
