@@ -96,7 +96,6 @@ function pushNewTag() {
         echo "    ${CLRD}Process aborted!"
         echo ""
     fi
-
 }
 
 function tagLoop() {
