@@ -9,15 +9,16 @@ CWHT=$'\e[38;5;15m'   # white
 CLBL=$'\e[38;5;117m'  # light blue
 CLGN=$'\e[38;5;2m'    # light green
 CLRD=$'\e[38;5;1m'    # light red
-
 BGRSTC=$'\e[49m'      # bg reset color
 BGCGN=$'\e[48;5;34m'  # bg green
 
 USERNAME=$(whoami)
 ROOT="/Users/${USERNAME}"
 DATE_AND_TIME=$(date +%Y-%m-%d_%H-%M-%S)
+
 BKP_FOLDER="/Users/${USERNAME}/Desktop/BKP_${DATE_AND_TIME}"
-mkdir "${BKP_FOLDER}"
+BKP_CONFIG=(".ssh" ".gitconfig" ".gitignore_global" ".prettierrc" ".vimrc" ".zshrc")
+BKP_APPS=("moom" "iterm" "magnet" "snagit" "keyboardmaestro" "breaktimer" "Terminal")
 
 function bkpConfig () {
     local FILE=$1
@@ -34,58 +35,35 @@ function bkpConfig () {
     fi
 }
 
-bkpConfig "${ROOT}/.ssh"              "Config"
-bkpConfig "${ROOT}/.gitconfig"        "Config"
-bkpConfig "${ROOT}/.gitignore_global" "Config"
-bkpConfig "${ROOT}/.prettierrc"       "Config"
-bkpConfig "${ROOT}/.vimrc"            "Config"
-bkpConfig "${ROOT}/.zshrc"            "Config"
-
 function bkpAppConfig () {
-    APP=$1
-    APP_EXISTS=$(ls "/Applications/" | grep -i ${APP})
+    local APP=$1
+    local DESTINATION_FOLDER=$2
 
-    if [ "$APP_EXISTS" != "" ]; then
-        if [ ! -d "${BKP_FOLDER}/App" ]; then
-            mkdir "${BKP_FOLDER}/App"
-        fi
-
-        case $APP in
-            moom)
-                defaults export com.manytricks.Moom "${BKP_FOLDER}/App/moom.plist"
-                ;;
-            iterm)
-                defaults export com.googlecode.iterm2.plist "${BKP_FOLDER}/App/iterm2.plist"
-                ;;
-            magnet)
-                defaults export com.crowdcafe.windowmagnet.plist "${BKP_FOLDER}/App/magnet.plist"
-                ;;
-            breaktimer)
-                defaults export com.tomjwatson.breaktimer.plist "${BKP_FOLDER}/App/break_timer.plist"
-                ;;
-            snagit)
-                defaults export com.TechSmith.Snagit2021.plist "${BKP_FOLDER}/App/snagit.plist"
-                defaults export com.techsmith.SnagitRecorder2021.plist "${BKP_FOLDER}/App/snagit_recorder.plist"
-                defaults export com.techsmith.snagit.capturehelper2021.plist "${BKP_FOLDER}/App/snagit_capture.plist"
-                ;;
-            keyboard)
-                defaults export com.stairways.keyboardmaestro.plist "${BKP_FOLDER}/App/keyboardmaestro.plist"
-                defaults export com.stairways.keyboardmaestro.editor.plist "${BKP_FOLDER}/App/keyboard_maestro_editor.plist"
-                defaults export com.stairways.keyboardmaestro.engine.plist "${BKP_FOLDER}/App/keyboard_maestro_engine.plist"
-                ;;
-        esac
-    else
-        echo "${CLRD}Unable to find application named ${CLOG}${APP}${RSTC}"
+    if [ ! -d "${BKP_FOLDER}/${DESTINATION_FOLDER}" ]; then
+        mkdir "${BKP_FOLDER}/${DESTINATION_FOLDER}"
     fi
+
+    PLISTS=($(ls /Users/${USERNAME}/Library/Preferences/ | grep -i "${APP}"))
+    for line in $PLISTS; do
+        defaults export $line "${BKP_FOLDER}/${DESTINATION_FOLDER}/${line}"
+        # defaults import com.manytricks.Moom ~/Desktop/com.manytricks.Moom.plist
+    done
 }
 
-bkpAppConfig "moom"
-bkpAppConfig "iterm"
-bkpAppConfig "magnet"
-bkpAppConfig "snagit"
-bkpAppConfig "keyboard"
-bkpAppConfig "breaktimer"
+function init () {
+    mkdir "${BKP_FOLDER}"
 
-echo ""
-echo "    ${BGCGN}${CWHT}DONE!${RSTC}${BGRSTC} ${CLGN}Your backup has been saved in ${CLBL}${BKP_FOLDER}${RSTC}"
-echo ""
+    for item in $BKP_CONFIG; do
+        bkpConfig "${ROOT}/${item}" "Config"
+    done
+
+    for app in $BKP_APPS; do
+        bkpAppConfig "${app}" "App"
+    done
+
+    echo ""
+    echo "    ${BGCGN}${CWHT}DONE!${RSTC}${BGRSTC} ${CLGN}Your backup has been saved in ${CLBL}${BKP_FOLDER}${RSTC}"
+    echo ""
+}
+
+init
