@@ -1,3 +1,7 @@
+# Use NPM Package
+
+- [npm i -g git-new](https://www.npmjs.com/package/git-new)
+
 # @new - Git Repository
 
 - [Source Code](https://github.com/Roger-Takeshita/Shell-Script/blob/master/git-new-repo.sh)
