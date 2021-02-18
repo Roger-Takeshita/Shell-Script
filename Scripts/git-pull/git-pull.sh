@@ -16,30 +16,29 @@ NoBlink=$'\e[25m'
 
 gitPull() {
     if [ -d "$1/.git" ]; then
-        # main=`cd $1; git show-ref refs/heads/main`
-        # master=`cd $1; git show-ref refs/heads/master`
-        branch=`cd $1; git branch --show-current`
-
+        BRANCH=`cd $1; git branch --show-current`
         echo "${Bold}${CBL}——————› $(basename $1)${RST}${RSTF}"
 
-        # if [ -n "$main" ]; then
-        #     branch="main"
-        # elif [ -n "$master" ]; then
-        #     branch="master"
-        # fi
-
-        if [ -n $branch ]; then
-            response=`cd $1; git pull origin $branch`
-            if [[ $response =~ '.*Fast-forward.*' ]] || [[ $response == 'Already up to date.' ]]; then
-                echo "${CLGN}${response}${RSTC}"
+        if [ -n $BRANCH ]; then
+            RESPONSE=`cd $1; git pull origin $BRANCH`
+            if [[ $RESPONSE =~ '.*Fast-forward.*' ]] || [[ $RESPONSE == 'Already up to date.' ]]; then
+                echo "${CLGN}${RESPONSE}${RSTC}"
             else
-                echo "${Blink}${CLRD}${Bold}ATTENTION!${RSTF}${RSTC}${NoBlink} ${CLOG}Uncommited changes.${RSTC}"
+                echo "${Blink}${CLRD}${Bold}ATTENTION!${RSTF}${RSTC}${NoBlink} ${CLOG}Something went wrong.${RSTC}"
             fi
         fi
     elif [ -d "$1" ]; then
-        for file2 in $1/*; do
-            gitPull $file2
-        done
+        COUNT_FILES=`ls $1 | wc -l`
+
+        if [ $COUNT_FILES -gt 0 ]; then
+            for FILE in $1/*; do
+                NEXT_FOLDER=`basename "$FILE"`
+
+                if [ "$NEXT_FOLDER" != ".rmv" ] && [ "$NEXT_FOLDER" != ".vscode" ] && [ "$NEXT_FOLDER" != ".git" ] && [ "$NEXT_FOLDER" != "node_modules" ] && [ "$NEXT_FOLDER" != "node_modules.nosync" ]; then
+                    gitPull $FILE
+                fi
+            done
+        fi
     fi
 }
 
