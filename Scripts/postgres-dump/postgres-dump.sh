@@ -20,9 +20,10 @@ MONTH=$(date +"%m")
 DAY=$(date +"%d")
 DATABASE_NAME=$@
 SCRIPT_DIR=$(dirname "$0")
-DATABASE_FILE="${SCRIPT_DIR}/database_connection.json"
+FILENAME="database_connections.json"
+DATABASE_FILE="${SCRIPT_DIR}/${FILENAME}"
 
-function simpleErrorMsg () {
+function dbErrorMsg () {
     local STATUS=$1
 
     if [[ "$STATUS" =~ .*"skipping".* ]]; then
@@ -31,6 +32,19 @@ function simpleErrorMsg () {
         echo ""
         exit 1
     fi
+}
+
+function simpleErrorMsg () {
+    local MSG=$1
+    local DATABASE_F=$2
+
+    echo ""
+    echo "   ${CLRD}Process aborted: ${CLOG}${MSG}${RSTC}"
+    if [ "${DATABASE_F}" != "" ]; then
+        echo "   ${CBL}${DATABASE_F}${RSTC}"
+    fi
+    echo ""
+    exit 1
 }
 
 function deleteFolder () {
@@ -42,34 +56,21 @@ function deleteFolder () {
 }
 
 if [ ${#DATABASE_NAME} -eq 0 ]; then
-    echo ""
-    echo "   ${CLRD}Process aborted: ${CLOG}please provide a database name.${RSTC}"
-    echo ""
-    exit 1
+    simpleErrorMsg "please provide a database name."
 fi
 
 if [ $# -gt 1 ]; then
-    echo ""
-    echo "   ${CLRD}Process aborted: ${CLOG}please provide only one argument.${RSTC}"
-    echo ""
-    exit 1
+    simpleErrorMsg "please provide only one argument."
 fi
 
 if [ ! -f "$DATABASE_FILE" ]; then
-    echo ""
-    echo "   ${CLRD}Process aborted: ${CLOG}file doesn't exist.${RSTC}"
-    echo "   ${CBL}${DATABASE_FILE}${RSTC}"
-    echo ""
-    exit 1
+    simpleErrorMsg "${CBL}${FILENAME}${CLOG} doesn't exist. Please create one in:" $DATABASE_FILE
 fi
 
 POSTGRES_URL=$(cat $DATABASE_FILE | grep "\"${DATABASE_NAME}\":" | sed 's/[\",]//g' | sed -e "s/\(${DATABASE_NAME}:\) \(.*\)/\2/" | xargs)
 
 if [ "$POSTGRES_URL" = "" ]; then
-    echo ""
-    echo "   ${CLRD}Process aborted: ${BGCOG}${CWHT}${DATABASE_NAME}${BGRSTC}${CLOG} connection URL not found. Please double check if you have a field named ${BGCOG}${CWHT}${DATABASE_NAME}${BGRSTC} ${CLOG}in ${CBL}${DATABASE_FILE}${RSTC}"
-    echo ""
-    exit 1
+    simpleErrorMsg "${BGCOG}${CWHT}${DATABASE_NAME}${BGRSTC}${CLOG} connection URL not found. Please double check if you have a field named ${BGCOG}${CWHT}${DATABASE_NAME}${BGRSTC} ${CLOG}in:${RSTC}" $DATABASE_FILE
 fi
 
 DUMP_FOLDER="${DESKTOP_DIR}/${YEAR}-${MONTH}-${DAY}_${DATABASE_NAME}_dump"
@@ -79,11 +80,12 @@ deleteFolder $DUMP_FOLDER
 echo ""
 echo "   ${CLGN}Dumping remote database into ${CBL}${DUMP_FOLDER}${RSTC}"
 pg_dump -j 8 -Fd $POSTGRES_URL -f $DUMP_FOLDER
-zip -r "$DUMP_FOLDER/${YEAR}-${MONTH}-${DAY}_${DATABASE_NAME}_dump" "${DUMP_FOLDER}" > /dev/null 2>&1
+zip -r "$DUMP_FOLDER/${YEAR}-${MONTH}-${DAY}_${DATABASE_NAME}_dump" \
+        "${DUMP_FOLDER}" > /dev/null 2>&1
 STATUS1=$(dropdb $LOCAL_DATABASE_NAME --if-exists 2>&1 1>/dev/null)
-simpleErrorMsg $STATUS1
+dbErrorMsg $STATUS1
 STATUS2=$(createdb $LOCAL_DATABASE_NAME 2>&1 1>/dev/null)
-simpleErrorMsg $STATUS2
+dbErrorMsg $STATUS2
 echo "   ${CLGN}Restoring local database ${CBL}${LOCAL_DATABASE_NAME}${RSTC}"
 pg_restore -j 8 -d $LOCAL_DATABASE_NAME $DUMP_FOLDER
 echo ""
