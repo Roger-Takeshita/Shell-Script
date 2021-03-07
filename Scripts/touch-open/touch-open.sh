@@ -9,9 +9,7 @@ CLRD=$'\e[38;5;1m'   # light red
 
 DIR=''
 OPEN_FILE=1
-USE_PREV_DIR=1
-
-rm -rf test/
+JOIN_FLAG=0
 
 if [ $# -eq 0 ]; then
     echo "${CLRD}ERROR:${RSTC} I need a file"
@@ -26,10 +24,10 @@ function tFile () {
     local DIRECTORY=$1
     local FILE=$2
     local FILE_PATH="${DIRECTORY}${FILE}"
+
     if [ ! -f $FILE_PATH ]; then
         touch $FILE_PATH
     else
-        echo "exists"
         printf "%s\n" "${DIRECTORY}${CLGN}${FILE}${RSTC} - ${CLRD}Already Exists${RSTC}"
     fi
 
@@ -47,27 +45,34 @@ function mDir () {
 }
 
 function touchFiles () {
-    for item1 in $1
-    do
+    local FILES=$@
+
+    for item1 in $FILES; do
         IFS='/' read -ra FOLDER <<< "$item1"
 
         if [ $item1 == "+" ]; then
-            USE_PREV_DIR=1
+            JOIN_FLAG=1
             continue
         elif [ $item1 == "-n" ]; then
             continue
-        elif [ $item1 == " " ]; then
-            USE_PREV_DIR=0
+        elif [ $JOIN_FLAG -eq 1 ]; then
+            JOIN_FLAG=0
+        else
             DIR=''
         fi
 
         for item2 in ${FOLDER[@]}; do
+            if [ "$item2" == "Dockerfile" ] || [ "$item2" == "Procfile" ] || [ "$item2" == "LICENSE" ]; then
+                tFile $DIR $item2
+                continue
+            elif [ "$item2" == ".ssh" ] || [ "$item2" == ".ssl" ] || [ "$item2" == ".vscode" ]; then
+                DIR="${DIR}${item2}/"
+                mDir $DIR
+                continue
+            fi
+
             if [[ ${item2%.*} == ${item2##*.} ]]; then
-                if [ "$item2" == "Dockerfile" ] || [ "$item2" == "Procfile" ] || [ "$item2" == "LICENSE" ]; then
-                    tFile $DIR $item2
-                else
-                    DIR="${DIR}${item2}/"
-                fi
+                DIR="${DIR}${item2}/"
                 mDir $DIR
             else
                 tFile $DIR $item2
