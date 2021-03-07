@@ -7,78 +7,73 @@ RSTC=$'\e[39m'       # reset color
 CLGN=$'\e[38;5;2m'   # light green
 CLRD=$'\e[38;5;1m'   # light red
 
-previousDir=""
-shouldOpenFile=1
-usePreviousDir=0
+DIR=''
+OPEN_FILE=1
+USE_PREV_DIR=1
+
+rm -rf test/
 
 if [ $# -eq 0 ]; then
     echo "${CLRD}ERROR:${RSTC} I need a file"
     exit 1
 fi
 
-for path in $@
-do
-    IFS='/' read -ra items <<< "$path"
-    dir=''
+if [[ "$@" =~ .*"-n".* ]]; then
+    OPEN_FILE=0;
+fi
 
-    if [[ $path =~ (^-.+$) ]]; then
-        # echo " ${fileName}"
-
-        if [ "$path" = "-n" ]; then
-            shouldOpenFile=0;
-        fi
-
-        continue
+function tFile () {
+    local DIRECTORY=$1
+    local FILE=$2
+    local FILE_PATH="${DIRECTORY}${FILE}"
+    if [ ! -f $FILE_PATH ]; then
+        touch $FILE_PATH
+    else
+        echo "exists"
+        printf "%s\n" "${DIRECTORY}${CLGN}${FILE}${RSTC} - ${CLRD}Already Exists${RSTC}"
     fi
 
-    if [ $path = "+" ]; then
-        usePreviousDir=1
-    elif [ $usePreviousDir -eq 0 ]; then
-        dir=""
-        previousDir=""
+    if [ $OPEN_FILE -eq 1 ]; then
+        code $FILE_PATH
     fi
+}
 
-    for item in ${items[@]}
+function mDir () {
+    local FOLDER=$1
+
+    if [ ! -d "$FOLDER" ]; then
+        mkdir -p "$FOLDER"
+    fi
+}
+
+function touchFiles () {
+    for item1 in $1
     do
-        if [ $item = "+" ]; then
+        IFS='/' read -ra FOLDER <<< "$item1"
+
+        if [ $item1 == "+" ]; then
+            USE_PREV_DIR=1
             continue
+        elif [ $item1 == "-n" ]; then
+            continue
+        elif [ $item1 == " " ]; then
+            USE_PREV_DIR=0
+            DIR=''
         fi
 
-        if [[ ${item%.*} == ${item##*.} ]]; then
-            if [ "$item" == "Dockerfile" ] || [ "$item" == "Procfile" ]; then
-                if [ ! -f $item ]; then
-                    touch ${item}
-                fi
-            else
-                if [ $usePreviousDir -eq 1 ]; then
-                    dir="${previousDir}${item}/"
+        for item2 in ${FOLDER[@]}; do
+            if [[ ${item2%.*} == ${item2##*.} ]]; then
+                if [ "$item2" == "Dockerfile" ] || [ "$item2" == "Procfile" ] || [ "$item2" == "LICENSE" ]; then
+                    tFile $DIR $item2
                 else
-                    dir="${dir}${item}/"
+                    DIR="${DIR}${item2}/"
                 fi
-
-                previousDir=$dir
-
-                if [ ! -d "$dir" ]; then
-                    mkdir -p "$dir"
-                fi
-            fi
-        else
-            file=$previousDir$item
-            usePreviousDir=0
-
-            if [ ! -f $file ]; then
-                touch ${file}
-
-                if [ $shouldOpenFile -eq 1 ]; then
-                    code "$file"
-                fi
+                mDir $DIR
             else
-                printf "%s\n" "${previousDir}${CLGN}${item}${RSTC} - ${CLRD}Already Exists${RSTC}"
-
-                if [ $shouldOpenFile -eq 1 ]; then
-                    code "$file"
-                fi
+                tFile $DIR $item2
             fi
-        fi
+        done
     done
-done
+}
+
+touchFiles $@
