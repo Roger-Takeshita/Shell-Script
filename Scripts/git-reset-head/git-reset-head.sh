@@ -6,7 +6,7 @@
 
 ARGS=$@
 HARD=0
-NUM=1
+NUM=0
 
 if [[ "$@" =~ -+hard($| )|-+HARD($| )|-+h($| ) ]]; then
     HARD=1;
@@ -16,7 +16,11 @@ if [[ "$@" =~ .*([0-9]+).* ]]; then
     NUM=${BASH_REMATCH[1]}
 fi
 
-if [ $HARD -eq 1 ]; then
+if [ $NUM -eq 0 ] && [ $HARD -eq 0 ]; then
+    git reset
+elif [ $NUM -eq 0 ] && [ $HARD -eq 1 ]; then
+    git reset HEAD~1 --hard
+elif [ $NUM -eq 1 ] && [ $HARD -eq 1 ]; then
     git reset HEAD~$NUM --hard
 else
     git reset HEAD~$NUM
