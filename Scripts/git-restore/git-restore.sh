@@ -8,6 +8,5 @@ FILE=$1
 if [ "$FILE" = "" ]; then
     git restore .
 else
-    echo $FILE
     git restore $FILE
 fi
