@@ -1,7 +1,21 @@
 [core]
-	excludesfile = /Users/roger-that/.gitignore_global
+    excludesfile = /Users/roger-that/.gitignore_global
+    editor = code --wait
 [alias]
-	log1 = "!git log --oneline"
-	ls = "!git ls-files -v | grep '^h'"
-	pullup = "!git pull upstream master"
-	conflict="!git diff --check | grep -i conflict"
+    ls = "!git ls-files -v | grep '^h'"
+    ignore= "!git update-index --assume-unchanged"
+    no-ignore= "!git update-index --no-assume-unchanged"
+    pullup = "!git pull upstream master"
+    conflict = "!git diff --check | grep -i conflict"
+    when = "!git show -1 --stat"
+    log1 = "!git log --oneline"
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code -n --wait $MERGED
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code -n --wait --diff $LOCAL $REMOTE
+[pull]
+    ff = only
