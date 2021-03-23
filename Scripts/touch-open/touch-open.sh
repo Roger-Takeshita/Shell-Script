@@ -8,6 +8,7 @@ CLGN=$'\e[38;5;2m'   # light green
 CLRD=$'\e[38;5;1m'   # light red
 
 DIR=''
+PREV_DIR=''
 OPEN_FILE=1
 JOIN_FLAG=0
 
@@ -47,37 +48,63 @@ function mDir () {
 function touchFiles () {
     local FILES=$@
 
-    for item1 in $FILES; do
-        IFS='/' read -ra FOLDER <<< "$item1"
+    if [[ "$@" =~ .*( -n ).* ]]; then
+        OPEN_FILE=1
+    fi
 
-        if [ $item1 == "+" ]; then
-            JOIN_FLAG=1
-            continue
-        elif [ $item1 == "-n" ]; then
-            continue
-        elif [ $JOIN_FLAG -eq 1 ]; then
-            JOIN_FLAG=0
+    for ITEM1 in $FILES; do
+        IFS='/' read -ra FOLDER <<< "$ITEM1"
+        LEN=${#FOLDER[@]}
+
+        if [ $LEN -gt 1 ]; then
+            for ITEM2 in ${FOLDER[@]}; do
+                if [ "$ITEM2" == "Dockerfile" ] || [ "$ITEM2" == "Procfile" ] || [ "$ITEM2" == "LICENSE" ]; then
+                    tFile $DIR $ITEM2
+                    continue
+                elif [ "$ITEM2" == ".ssh" ] || [ "$ITEM2" == ".ssl" ] || [ "$ITEM2" == ".vscode" ]; then
+                    DIR="${DIR}${ITEM2}/"
+                    mDir $DIR
+                    continue
+                fi
+
+                if [[ "$ITEM2" =~ .*\..* ]]; then
+                    tFile $DIR $ITEM2
+                else
+                    DIR="${DIR}${ITEM2}/"
+
+                    if [ "$ITEM2" != "${FOLDER[$LEN-1]}" ]; then
+                        PREV_DIR=$DIR
+                    fi
+
+                    mDir $DIR
+                fi
+            done
         else
-            DIR=''
-        fi
-
-        for item2 in ${FOLDER[@]}; do
-            if [ "$item2" == "Dockerfile" ] || [ "$item2" == "Procfile" ] || [ "$item2" == "LICENSE" ]; then
-                tFile $DIR $item2
+            if [ $ITEM1 == "+" ]; then
+                DIR="${PREV_DIR}/"
+                JOIN_FLAG=1
                 continue
-            elif [ "$item2" == ".ssh" ] || [ "$item2" == ".ssl" ] || [ "$item2" == ".vscode" ]; then
-                DIR="${DIR}${item2}/"
-                mDir $DIR
+            elif [ $ITEM1 == "-n" ]; then
                 continue
             fi
 
-            if [[ ${item2%.*} == ${item2##*.} ]]; then
-                DIR="${DIR}${item2}/"
-                mDir $DIR
+            if [[ "$ITEM1" =~ .*\..* ]]; then
+                if [ $JOIN_FLAG -eq 1 ]; then
+                    JOIN_FLAG=0
+                else
+                    DIR=''
+                fi
+
+                tFile $DIR $ITEM1
             else
-                tFile $DIR $item2
+                if [ $JOIN_FLAG -eq 1 ]; then
+                    JOIN_FLAG=0
+                    mDir "${DIR}${ITEM1}/"
+                else
+                    mDir $ITEM1
+                fi
             fi
-        done
+        fi
     done
 }
 
