@@ -13,14 +13,15 @@ BGRSTC=$'\e[49m'      # bg reset color
 BGCGN=$'\e[48;5;34m'  # bg green
 
 USERNAME=$(whoami)
+DIR=$(dirname "$0")
 ROOT="/Users/${USERNAME}"
 DATE_AND_TIME=$(date +%Y-%m-%d_%H-%M-%S)
+ZIP_FILE="MAC_BKP_${DATE_AND_TIME}"
+BKP_FOLDER="/Users/${USERNAME}/Desktop/${ZIP_FILE}"
+BKP_CONFIG=($(<${DIR}/bkp_config.txt))
+BKP_APPS=($(<${DIR}/bkp_app.txt))
 
-BKP_FOLDER="/Users/${USERNAME}/Desktop/BKP_${DATE_AND_TIME}"
-BKP_CONFIG=("bin" ".ssh" ".ssl" ".clang-format" ".gitconfig" ".gitignore_global" ".prettierrc" ".tmux.conf" ".vimrc" ".zshrc")
-BKP_APPS=("moom" "iterm" "magnet" "snagit" "keyboardmaestro" "breaktimer" "Terminal")
-
-function bkpConfig () {
+bkpConfig () {
     local FILE=$1
     local DESTINATION_FOLDER=$2
 
@@ -35,7 +36,7 @@ function bkpConfig () {
     fi
 }
 
-function bkpAppConfig () {
+bkpAppConfig () {
     local APP=$1
     local DESTINATION_FOLDER=$2
 
@@ -50,7 +51,7 @@ function bkpAppConfig () {
     done
 }
 
-function init () {
+bkp () {
     mkdir "${BKP_FOLDER}"
 
     for item in $BKP_CONFIG; do
@@ -66,4 +67,4 @@ function init () {
     echo ""
 }
 
-init
+bkp
