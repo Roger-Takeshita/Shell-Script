@@ -17,7 +17,7 @@ ROOT="/Users/${USERNAME}"
 DATE_AND_TIME=$(date +%Y-%m-%d_%H-%M-%S)
 
 BKP_FOLDER="/Users/${USERNAME}/Desktop/BKP_${DATE_AND_TIME}"
-BKP_CONFIG=(".ssh" ".ssl" ".clang-format" ".gitconfig" ".gitignore_global" ".prettierrc" ".vimrc" ".zshrc")
+BKP_CONFIG=("bin" ".ssh" ".ssl" ".clang-format" ".gitconfig" ".gitignore_global" ".prettierrc" ".tmux.conf" ".vimrc" ".zshrc")
 BKP_APPS=("moom" "iterm" "magnet" "snagit" "keyboardmaestro" "breaktimer" "Terminal")
 
 function bkpConfig () {
