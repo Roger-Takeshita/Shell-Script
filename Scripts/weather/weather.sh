@@ -4,11 +4,17 @@
 # https://github.com/Roger-Takeshita/Shell-Script
 
 set -e
-DIR=$(dirname `which $0`)
-OPENWEATHER_KEY=$(cat "${DIR}/.env" | grep OPENWEATHER_KEY | sed -e "s/\(.*=\)\(.*\)/\2/" | xargs)
 
-# Weather data reference: http://openweathermap.org/weather-conditions
-weather_icon() {
+getEnvValue() {
+    local ENV_KEY=$1
+    DIR=$(dirname `which $0`)
+
+    ENV_VALUE=$(cat "${DIR}/.env" | grep $ENV_KEY | sed -e "s/\(.*=\)\(.*\)/\2/" | xargs)
+    echo $ENV_VALUE
+}
+
+getWeatherIcon() {
+    # Weather data reference: http://openweathermap.org/weather-conditions
   case $1 in
     200) echo 🌩
         ;;
@@ -160,17 +166,21 @@ weather_icon() {
   esac
 }
 
-LOCATION=$(curl --silent http://ip-api.com/csv)
-CITY=$(echo "$LOCATION" | cut -d , -f 6)
-LAT=$(echo "$LOCATION" | cut -d , -f 8)
-LON=$(echo "$LOCATION" | cut -d , -f 9)
+getWeather() {
+    LOCATION=$(curl --silent http://ip-api.com/csv)
+    CITY=$(echo "$LOCATION" | cut -d , -f 6)
+    LAT=$(echo "$LOCATION" | cut -d , -f 8)
+    LON=$(echo "$LOCATION" | cut -d , -f 9)
 
-WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$OPENWEATHER_KEY"\&units=metric)
+    OPENWEATHER_API_KEY=$(getEnvValue 'OPENWEATHER_KEY')
+    WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$OPENWEATHER_API_KEY"\&units=metric)
+    CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
+    # ICON_ID=$(echo "$WEATHER" | jq .weather[0].icon)
+    TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)°C"
+    WIND_SPEED="$(echo "$WEATHER" | jq .wind.speed | awk '{print int($1+0.5)}')ms"
+    ICON=$(getWeatherIcon "$CATEGORY")
 
-CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
-# ICON_ID=$(echo "$WEATHER" | jq .weather[0].icon)
-TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)°C"
-WIND_SPEED="$(echo "$WEATHER" | jq .wind.speed | awk '{print int($1+0.5)}')ms"
-ICON=$(weather_icon "$CATEGORY")
+    printf "%s" "$TEMP $ICON  $WIND_SPEED"
+}
 
-printf "%s" "$TEMP $ICON $WIND_SPEED"
+getWeather
