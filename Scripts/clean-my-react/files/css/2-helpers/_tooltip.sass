@@ -1,0 +1,34 @@
+@import ../2-base/variables
+
+.tooltip
+  position: relative
+  display: inline-block
+
+  &__tooltip-text
+    visibility: hidden
+    background-color: $clr-primary
+    color: $clr-white
+    text-align: center
+    width: 6rem
+    border-radius: 0.6rem
+    padding: 0.5rem 0
+    position: absolute
+    bottom: 125%
+    left: 50%
+    z-index: 1
+    margin-left: -3rem
+    opacity: 0
+    transition: opacity 0.3s ease-in-out
+
+    &::after
+      content: ''
+      position: absolute
+      top: 100%
+      left: 50%
+      margin-left: -0.5rem
+      border-width: 0.5rem
+      border-style: solid
+      border-color: $clr-grey transparent transparent transparent
+  &:hover &__tooltip-text
+    visibility: visible
+    opacity: 1

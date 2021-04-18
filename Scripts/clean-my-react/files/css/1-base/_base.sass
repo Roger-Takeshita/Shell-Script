@@ -1,0 +1,38 @@
+*,
+*::before,
+*::after
+  margin: 0
+  padding: 0
+  box-sizing: border-box
+
+html
+  height: 100vh
+  width: 100vw
+
+body,
+#root
+  height: 100%
+  width: 100%
+  font-family: sans-serif
+  font-weight: 400
+  line-height: 1
+  font-size: 62.5%
+
+.app
+  height: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+
+main
+  flex-grow: 1
+  width: 100%
+  max-width: $default-page-size
+  padding: 2rem
+  display: flex
+  justify-content: center
+
+.container
+  max-width: $default-page-size
+  width: 100%
+  display: flex

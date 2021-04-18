@@ -1,0 +1,25 @@
+@mixin abs-center($x: -50%, $y: -50%)
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate($x, $y)
+
+@mixin mq($breakpoint)
+  @if $breakpoint == phone
+    @media (max-width: 37.5em) //! 600px
+      @content
+
+  @if $breakpoint == tab-port
+    @media (max-width: 56.25em) //! 900px
+      @content
+
+  @if $breakpoint == tab-land
+    @media (max-width: 75rem) //! 1200px
+      @content
+
+  @if $breakpoint == desk
+    @media (max-width: 112.5rem) //! 1800px
+      @content
+
+@mixin google-font($family)
+  @import url('https://fonts.googleapis.com/css2?family=#{$family}&display=swap')
