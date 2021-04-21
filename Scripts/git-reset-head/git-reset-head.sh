@@ -17,7 +17,11 @@ if [[ "$@" =~ .*([0-9]+).* ]]; then
 fi
 
 if [ $NUM -eq 0 ] && [ $HARD -eq 0 ]; then
-    git reset
+    if [ $ARGS ]; then
+        git reset $ARGS
+    else
+        git reset
+    fi
 elif [ $NUM -eq 0 ] && [ $HARD -eq 1 ]; then
     git reset HEAD~1 --hard
 elif [ $NUM -gt 0 ] && [ $HARD -eq 1 ]; then
