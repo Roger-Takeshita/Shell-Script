@@ -9,19 +9,15 @@ CLRD=$'\e[38;5;1m'   # light red
 
 DIR=''
 PREV_DIR=''
-OPEN_FILE=1
+OPEN_FILE=0
 JOIN_FLAG=0
 
 if [ $# -eq 0 ]; then
     echo "${CLRD}ERROR:${RSTC} I need a file"
-    exit 1
+    exit 22
 fi
 
-if [[ "$@" =~ .*"-n".* ]]; then
-    OPEN_FILE=0;
-fi
-
-function tFile () {
+touchFile () {
     local DIRECTORY=$1
     local FILE=$2
     local FILE_PATH="${DIRECTORY}${FILE}"
@@ -37,7 +33,7 @@ function tFile () {
     fi
 }
 
-function mDir () {
+makeDir () {
     local FOLDER=$1
 
     if [ ! -d "$FOLDER" ]; then
@@ -45,10 +41,10 @@ function mDir () {
     fi
 }
 
-function touchFiles () {
+touchFiles () {
     local FILES=$@
 
-    if [[ "$@" =~ .*( -n ).* ]]; then
+    if [[ "$@" =~ .*( -y ).* ]]; then
         OPEN_FILE=1
     fi
 
@@ -56,19 +52,23 @@ function touchFiles () {
         IFS='/' read -ra FOLDER <<< "$ITEM1"
         LEN=${#FOLDER[@]}
 
+        if [ $JOIN_FLAG -eq 0 ]; then
+            DIR=''
+        fi
+
         if [ $LEN -gt 1 ]; then
             for ITEM2 in ${FOLDER[@]}; do
                 if [ "$ITEM2" == "Dockerfile" ] || [ "$ITEM2" == "Procfile" ] || [ "$ITEM2" == "LICENSE" ]; then
-                    tFile $DIR $ITEM2
+                    touchFile $DIR $ITEM2
                     continue
                 elif [ "$ITEM2" == ".ssh" ] || [ "$ITEM2" == ".ssl" ] || [ "$ITEM2" == ".vscode" ]; then
                     DIR="${DIR}${ITEM2}/"
-                    mDir $DIR
+                    makeDir $DIR
                     continue
                 fi
 
                 if [[ "$ITEM2" =~ .*\..* ]]; then
-                    tFile $DIR $ITEM2
+                    touchFile $DIR $ITEM2
                 else
                     DIR="${DIR}${ITEM2}/"
 
@@ -76,7 +76,7 @@ function touchFiles () {
                         PREV_DIR=$DIR
                     fi
 
-                    mDir $DIR
+                    makeDir $DIR
                 fi
             done
         else
@@ -84,7 +84,7 @@ function touchFiles () {
                 DIR="${PREV_DIR}/"
                 JOIN_FLAG=1
                 continue
-            elif [ $ITEM1 == "-n" ]; then
+            elif [ $ITEM1 == "-y" ]; then
                 continue
             fi
 
@@ -95,13 +95,13 @@ function touchFiles () {
                     DIR=''
                 fi
 
-                tFile $DIR $ITEM1
+                touchFile $DIR $ITEM1
             else
                 if [ $JOIN_FLAG -eq 1 ]; then
                     JOIN_FLAG=0
-                    mDir "${DIR}${ITEM1}/"
+                    makeDir "${DIR}${ITEM1}/"
                 else
-                    mDir $ITEM1
+                    makeDir $ITEM1
                 fi
             fi
         fi

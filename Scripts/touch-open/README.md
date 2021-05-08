@@ -8,8 +8,8 @@
 
 - Search if path and file already exist, otherwise, it will create the folder(s) and the file
 
-  - if we pass `-n` as the first argument, the script wont open the files after creating them
-    - `touch -n test/test.js test1/test1.js`
+  - if we pass `-y` as the first argument, the script will open the files after creating them
+    - `touch -y test/test.js test1/test1.js`
     - My default editor is the VSCode
   - if we pass `+` between files, it will create the next file inside the previous folder, we can nest multiple folder/files
     - unfortunately we can't go back to the previous folder, we can only create the file on the same level or above
