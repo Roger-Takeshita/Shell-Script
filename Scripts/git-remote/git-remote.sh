@@ -11,7 +11,11 @@ if [[ "$@" =~ .*"-n".* ]]; then
     OPEN_FILE=0
 fi
 
-REMOTE_URL=$(git remote -v | grep fetch | sed -e 's/origin//g' | sed -e 's/[()]//g' | sed -e 's/fetch//g' | sed -e 's/\.git//g'  | xargs)
+REMOTE_URL=$(git remote -v | grep fetch | sed -e 's/origin//g' -e 's/[()]//g' -e 's/fetch//g' -e 's/\.git//g' -e 's/git@github.com://g' | xargs )
+
+if [[ "$REMOTE_URL" != "https"* ]]; then
+  REMOTE_URL="https://github.com/${REMOTE_URL}"
+fi
 
 echo ""
 echo "   ${CLBL}${REMOTE_URL}${RSTC}"
