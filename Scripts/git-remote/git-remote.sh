@@ -17,12 +17,11 @@ if [[ "$REMOTE_URL" != "https"* ]]; then
   REMOTE_URL="https://github.com/${REMOTE_URL}"
 fi
 
-echo ""
-echo "   ${CLBL}${REMOTE_URL}${RSTC}"
-echo ""
-
 if [ $OPEN_FILE -eq 1 ]; then
     open $REMOTE_URL
+else
+  echo ""
+  echo "   ${CLBL}${REMOTE_URL}${RSTC}"
+  echo ""
+  echo "${REMOTE_URL}" | tr -d '\n'| pbcopy
 fi
-
-echo "${REMOTE_URL}" | tr -d '\n'| pbcopy
