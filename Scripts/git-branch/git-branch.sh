@@ -19,5 +19,5 @@ else
         exit 1
     fi
 
-    echo "git checkout -b ${BRANCH}/PREP-" | tr -d '\n' | pbcopy
+    echo "git checkout -b ${BRANCH}/" | tr -d '\n' | pbcopy
 fi
