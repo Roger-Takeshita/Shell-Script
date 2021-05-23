@@ -85,33 +85,33 @@
     ```
 
   ```Bash
-    RSTC=$'\e[39m'        # reset color
-    CBK=$'\e[38;5;0m'     # black
-    CBL=$'\e[38;5;27m'    # blue
-    CGY=$'\e[38;5;240m'   # gray
-    CGN=$'\e[38;5;34m'    # green
-    CM=$'\e[38;5;213m'    # magenta
-    COG=$'\e[38;5;166m'   # orange
-    CRD=$'\e[38;5;196m'   # red
-    CYL=$'\e[38;5;184m'   # yellow
-    CWHT=$'\e[38;5;15m'   # white
-    CLBL=$'\e[38;5;117m'  # light blue
-    CLGY=$'\e[38;5;250m'  # light gray
-    CLGN=$'\e[38;5;2m'    # light green
-    CLM=$'\e[38;5;219m'   # light magenta
-    CLOG=$'\e[38;5;215m'  # light orange
-    CLRD=$'\e[38;5;1m'    # light red
-    CLYL=$'\e[38;5;228m'  # light yellow
-    BGRSTC=$'\e[49m'      # bg reset color
-    BGCBK=$'\e[48;5;0m'   # bg black
-    BGCBL=$'\e[48;5;27m'  # bg blue
-    BGCGY=$'\e[48;5;240m' # bg gray
-    BGCGN=$'\e[48;5;34m'  # bg green
-    BGCM=$'\e[48;5;213m'  # bg magenta
-    BGCOG=$'\e[48;5;166m' # bg orange
-    BGCRD=$'\e[48;5;196m' # bg red
-    BGCYL=$'\e[48;5;184m' # bg yellow
-    BGCWHT=$'\e[48;5;15m' # bg white
+    FGRST=$'\e[39m'        # reset color
+    FGBK=$'\e[38;5;0m'     # black
+    FGBL=$'\e[38;5;27m'    # blue
+    FGGY=$'\e[38;5;240m'   # gray
+    FGGN=$'\e[38;5;34m'    # green
+    FGM=$'\e[38;5;213m'    # magenta
+    FGOG=$'\e[38;5;166m'   # orange
+    FGRD=$'\e[38;5;196m'   # red
+    FGYL=$'\e[38;5;184m'   # yellow
+    FGWT=$'\e[38;5;15m'    # white
+    FGLBL=$'\e[38;5;117m'  # light blue
+    FGLGY=$'\e[38;5;250m'  # light gray
+    FGLGN=$'\e[38;5;2m'    # light green
+    FGLM=$'\e[38;5;219m'   # light magenta
+    FGLOG=$'\e[38;5;215m'  # light orange
+    FGLRD=$'\e[38;5;1m'    # light red
+    FGLYL=$'\e[38;5;228m'  # light yellow
+    BGRSTC=$'\e[49m'       # bg reset color
+    BGBK=$'\e[48;5;0m'     # bg black
+    BGBL=$'\e[48;5;27m'    # bg blue
+    BGGY=$'\e[48;5;240m'   # bg gray
+    BGGN=$'\e[48;5;34m'    # bg green
+    BGMG=$'\e[48;5;213m'   # bg magenta
+    BGOG=$'\e[48;5;166m'   # bg orange
+    BGRD=$'\e[48;5;196m'   # bg red
+    BGYL=$'\e[48;5;184m'   # bg yellow
+    BGWT=$'\e[48;5;15m'    # bg white
   ```
 
 - **Formatting**
