@@ -16,8 +16,16 @@ moveToTrash () {
   for FILE in "$@"; do
     if [[ "$FILE" =~ -[a-zA-Z0-9]+ ]]; then :
     else
-        [ -d $FILE ] && FILE=$(echo $FILE | sed -E 's/\/$//g' | xargs)
-        mv $FILE ~/.Trash/"${FILE} $(date +%H-%M-%S)" 2>/dev/null
+        if [ -d $FILE ]; then
+            FILE=$(echo $FILE | sed -E 's/\/$//g' | xargs)
+            NEW_FILE="${FILE} $(date +%H-%M-%S)"
+        elif [ -f $FILE ]; then
+            EXT="${FILE##*.}"
+            FILENAME="${FILE%.*}"
+            NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
+        fi
+
+        mv $FILE ~/.Trash/"${NEW_FILE}" 2>/dev/null
     fi
   done
 }
