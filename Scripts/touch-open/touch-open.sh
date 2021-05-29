@@ -43,8 +43,7 @@ makeDir () {
 
 touchFiles () {
     local FILES=$@
-
-    if [[ "$@" =~ .*( -y ).* ]]; then
+    if [[ "$FILES" =~ (.*[ ]?-y[ $]?) ]]; then
         OPEN_FILE=1
     fi
 
