@@ -15,13 +15,12 @@ Bold=$'\e[1m'
 
 NUM=$1
 
-if [ -z $NUM ]; then
-    NUM=0
-fi
+[ -z $NUM ] && NUM=0
 
-msgError() {
+errorMsg() {
     local MSG=$1
     local errorCode=$2
+
     echo "${CLRD}${MSG}${RSTC}"
     echo ""
     exit $errorCode
@@ -29,11 +28,8 @@ msgError() {
 
 stashDrop() {
     echo ""
-    STASH=$(git stash show stash@{$NUM} 2>&1 > /dev/null)
-
-    if [ "$STASH" != "" ]; then
-        msgError "${STASH}\n${CLBL}stash@{${CLOG}${Bold}${NUM}${RSTF}${CLBL}}${CLRD} doesn't exist!" 22
-    fi
+    ERROR=$(git stash show stash@{$NUM} 2>&1 > /dev/null)
+    [ "$ERROR" != "" ] && errorMsg "${ERROR}\n${CLBL}stash@{${CLOG}${Bold}${NUM}${RSTF}${CLBL}}${CLRD} doesn't exist!" 22
 
     FILES=$(git stash show stash@{$NUM} | sed -E "s/([+]+)/${CLGN}\1${RSTC}/g" | sed -E "s/([-]+)/${CLRD}\1${RSTC}/g")
     echo $FILES
@@ -42,10 +38,10 @@ stashDrop() {
     echo -n "Are you sure you want to drop stash ${CLOG}${Bold}${NUM}${RSTC}${RSTF}: ${Dim}${CLGY}(Y/n)${RSTC}${RSTF} "
     read ANSWER
 
-    if [ "$ANSWER" = "" ] || [ "$ANSWER" = "Y" ] || [ "$ANSWER" = "y" ] || [ "$ANSWER" = "Yes" ] || [ "$ANSWER" = "yes" ]; then
+    if [ -z $ANSWER ] || [ "$ANSWER" = "y" ] || [ "$ANSWER" = "Y" ]; then
         echo "$CLGN$(git stash drop stash@{$NUM})$RSTC"
     else
-        msgError "Operation canceled!" 125
+        errorMsg "Operation canceled!" 125
     fi
     echo ""
 }
