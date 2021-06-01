@@ -3,12 +3,13 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-FILES=$@
+ARGS=$@
 
-if [ -z $FILES ]; then
+if [ -z $ARGS ]; then
     git restore .
 else
-    for FILE in $@; do
-        git restore $FILE
+    ARGS_ARRARY=($(echo "$ARGS" | sed -E 's/[ ]*(M|D)[ ]*/ /g' | xargs))
+    for ITEM in ${ARGS_ARRARY[*]}; do
+        git restore $ITEM
     done
 fi
