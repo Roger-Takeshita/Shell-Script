@@ -3,10 +3,12 @@
 # Developed by Roger Takeshita
 # https://github.com/Roger-Takeshita/Shell-Script
 
-FILE=$1
+FILES=$@
 
-if [ "$FILE" = "" ]; then
+if [ -z $FILES ]; then
     git restore .
 else
-    git restore $FILE
+    for FILE in $@; do
+        git restore $FILE
+    done
 fi
