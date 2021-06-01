@@ -43,7 +43,7 @@ gitRemove() {
     echo ""
     printf "    ${FGLOG}%s${FGRST}\n" "${FILES[@]}"
     echo ""
-    echo -n "Are you sure you want to remove the new files? ${Dim}${FGGY}(Y/n)${FGRST}${RSTF} "
+    echo -n "Are you sure you want to delete the file(s)? ${Dim}${FGGY}(Y/n)${FGRST}${RSTF} "
     read ANSWER
 
     if [ -z $ANSWER ] || [ "$ANSWER" = "y" ] || [ "$ANSWER" = "Y" ]; then
