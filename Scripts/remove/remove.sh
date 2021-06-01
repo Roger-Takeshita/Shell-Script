@@ -13,15 +13,18 @@ NORMAL_REMOVE=0
 
 moveToTrash () {
   local FILES
+  local FILE_FOLDER
+
   for FILE in "$@"; do
     if [[ "$FILE" =~ -[a-zA-Z0-9]+ ]]; then :
     else
         if [ -d $FILE ]; then
             FILE=$(echo $FILE | sed -E 's/\/$//g' | xargs)
-            NEW_FILE="${FILE} $(date +%H-%M-%S)"
+            NEW_FILE="${FILE##*/} $(date +%H-%M-%S)"
         elif [ -f $FILE ]; then
             EXT="${FILE##*.}"
-            FILENAME="${FILE%.*}"
+            FILE_NAME=${FILE%.*}
+            FILENAME="${FILE_NAME##*/}"
             NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
         fi
 
