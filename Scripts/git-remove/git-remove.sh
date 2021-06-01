@@ -51,12 +51,13 @@ gitRemove() {
         for ITEM in ${FILES[*]}; do
             echo "  ${FGLRD}Deleted:${FGRST} ${ITEM}"
             if [ -d $ITEM ]; then
-              ITEM=$(echo $ITEM | sed -E 's/\/$//g' | xargs)
-              NEW_FILE="${ITEM} $(date +%H-%M-%S)"
+                ITEM=$(echo $ITEM | sed -E 's/\/$//g' | xargs)
+                NEW_FILE="${ITEM##*/} $(date +%H-%M-%S)"
             elif [ -f $ITEM ]; then
-              EXT="${ITEM##*.}"
-              FILENAME="${ITEM%.*}"
-              NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
+                EXT="${ITEM##*.}"
+                FILE_NAME=${ITEM%.*}
+                FILENAME="${FILE_NAME##*/}"
+                NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
             fi
 
             mv $ITEM ~/.Trash/"${NEW_FILE}" 2>/dev/null
