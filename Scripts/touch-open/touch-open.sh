@@ -9,7 +9,7 @@ CLRD=$'\e[38;5;1m'   # light red
 
 DIR=''
 PREV_DIR=''
-OPEN_FILE=0
+OPEN_FILE=1
 JOIN_FLAG=0
 NORMAL_TOUCH=0
 
@@ -34,10 +34,11 @@ makeDir () {
 touchFiles () {
     local FILES=$@
 
-    [[ "$FILES" =~ (.*[ ]?-y[ $]?) ]] && OPEN_FILE=1
-    [[ "$FILES" =~ (.*[ ]?-n[ $]?) ]] && NORMAL_TOUCH=1
+    [[ "$FILES" =~ (.*[ ]?-([^ ]+)?n([^ ]+)?[ $]?) ]] && OPEN_FILE=0
+    [[ "$FILES" =~ (.*[ ]?-([^ ]+)?d([^ ]+)?[ $]?) ]] && NORMAL_TOUCH=1
 
     if [ $NORMAL_TOUCH -eq 0 ]; then
+        FILES=$(echo "$FILES" | sed -E 's/-[^ ]+[ $]?//g' | xargs)
         for ITEM1 in $FILES; do
             IFS='/' read -ra FOLDER <<< "$ITEM1"
             LEN=${#FOLDER[@]}
@@ -68,8 +69,6 @@ touchFiles () {
                     DIR="${PREV_DIR}/"
                     JOIN_FLAG=1
                     continue
-                elif [ $ITEM1 == "-y" ]; then
-                    continue
                 fi
 
                 if [[ "$ITEM1" =~ .*\..* ]]; then
@@ -91,7 +90,7 @@ touchFiles () {
             fi
         done
     else
-        UPDATE_FILES=$(echo "$FILES" | sed -E 's/(-n|-y)[ $]?//g' | xargs)
+        UPDATE_FILES=$(echo "$FILES" | sed -E 's/-[^ ]+[ $]?//g' | xargs)
         touch $UPDATE_FILES
         [ $OPEN_FILE -eq 1 ] && [ ! -z $EDITOR ] && $EDITOR $UPDATE_FILES
     fi
