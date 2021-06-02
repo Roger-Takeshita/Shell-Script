@@ -40,9 +40,9 @@ removeFiles() {
     # rm -rf $UPDATE_FILES
 
     local FILES=$@
-    [[ "$FILES" =~ (.*[ ]?-n[ $]?) ]] && NORMAL_REMOVE=1
+    [[ "$FILES" =~ (.*[ ]?-d[ $]?) ]] && NORMAL_REMOVE=1
 
-    UPDATE_FILES=$(echo "$FILES" | sed -E 's/[ ]*(\?|M|N new file:)[ ]*/ /g' | sed -E 's/-n[ $]?//g' | xargs)
+    UPDATE_FILES=$(echo "$FILES" | sed -E 's/[ ]*(\?|M|N new file:)[ ]*/ /g' | sed -E 's/-d[ $]?//g' | xargs)
 
     if [ $NORMAL_REMOVE -eq 0 ]; then
         moveToTrash $UPDATE_FILES
