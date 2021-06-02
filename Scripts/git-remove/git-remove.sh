@@ -40,6 +40,8 @@ gitRemove() {
       fi
     done <<< "$CMD_OUTPUT"
 
+    [ ${#FILES[@]} -eq 0 ] && exit 1
+
     echo ""
     printf "    ${FGLOG}%s${FGRST}\n" "${FILES[@]}"
     echo ""
