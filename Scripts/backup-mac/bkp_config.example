@@ -1,0 +1,14 @@
+bin
+.aws
+.ssh
+.ssl
+.clang-format
+.gitconfig
+.gitignore_global
+.prettierrc
+.psqlrc
+.tmux.conf
+.tmux.conf.local
+.vimrc
+.zshrc
+.zsh_functions
