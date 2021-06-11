@@ -20,6 +20,7 @@ touchFile () {
     local FILE=$2
     local FILE_PATH="${DIRECTORY}${FILE}"
 
+    [[ "$FILE_PATH" =~ ^-[^\s]* ]] && FILE_PATH="./${FILE_PATH}"
     [ -f $FILE_PATH ] && printf "%s\n" "${DIRECTORY}${CLGN}${FILE}${RSTC} - ${CLRD}Already Exists${RSTC}"
     [ ! -f $FILE_PATH ] && touch $FILE_PATH
     [ $OPEN_FILE -eq 1 ] && [ ! -z $EDITOR ] && $EDITOR $FILE_PATH
@@ -28,17 +29,18 @@ touchFile () {
 makeDir () {
     local FOLDER=$1
 
+    [[ "$FOLDER" =~ ^-[^\s]* ]] && FOLDER="./${FOLDER}"
     [ ! -d $FOLDER ] && mkdir -p $FOLDER
 }
 
 touchFiles () {
     local FILES=$@
 
-    [[ "$FILES" =~ (.*[ ]?-([^ ]+)?n([^ ]+)?[ $]?) ]] && OPEN_FILE=0
-    [[ "$FILES" =~ (.*[ ]?-([^ ]+)?d([^ ]+)?[ $]?) ]] && NORMAL_TOUCH=1
+    [[ "$FILES" =~ ( -n[ $]?) ]] && OPEN_FILE=0
+    [[ "$FILES" =~ ( -d[ $]?) ]] && NORMAL_TOUCH=1
 
     if [ $NORMAL_TOUCH -eq 0 ]; then
-        FILES=$(echo "$FILES" | sed -E 's/-[^ ]+[ $]?//g' | xargs)
+        FILES=$(echo "$FILES" | sed -E 's/-(n|d)//g' | xargs)
         for ITEM1 in $FILES; do
             IFS='/' read -ra FOLDER <<< "$ITEM1"
             LEN=${#FOLDER[@]}
@@ -90,7 +92,7 @@ touchFiles () {
             fi
         done
     else
-        UPDATE_FILES=$(echo "$FILES" | sed -E 's/-[^ ]+[ $]?//g' | xargs)
+        UPDATE_FILES=$(echo "$FILES" | sed -E 's/\s-(n|d)//g' | xargs)
         touch $UPDATE_FILES
         [ $OPEN_FILE -eq 1 ] && [ ! -z $EDITOR ] && $EDITOR $UPDATE_FILES
     fi
