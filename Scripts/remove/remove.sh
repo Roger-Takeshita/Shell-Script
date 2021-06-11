@@ -12,11 +12,8 @@ NORMAL_REMOVE=0
 [ $# -eq 0 ] && echo "${FGLRD}ERROR:${FGRST} I need a file" && exit 22
 
 moveToTrash () {
-  local FILES
-  local FILE_FOLDER
-
   for FILE in "$@"; do
-    if [[ "$FILE" =~ -[a-zA-Z0-9]+ ]]; then :
+    if [[ "$FILE" =~ (\s-d$?) ]]; then :
     else
         if [ -d $FILE ]; then
             FILE=$(echo $FILE | sed -E 's/\/$//g' | xargs)
@@ -28,6 +25,7 @@ moveToTrash () {
             NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
         fi
 
+        [[ "$FILE" =~ ^-[^\s]* ]] && FILE="./${FILE}"
         mv $FILE ~/.Trash/"${NEW_FILE}" 2>/dev/null
     fi
   done
@@ -42,11 +40,12 @@ removeFiles() {
     local FILES=$@
     [[ "$FILES" =~ (.*[ ]?-d[ $]?) ]] && NORMAL_REMOVE=1
 
-    UPDATE_FILES=$(echo "$FILES" | sed -E 's/[ ]*(\?|M|N new file:)[ ]*/ /g' | sed -E 's/-d[ $]?//g' | xargs)
+    UPDATE_FILES=$(echo "$FILES" | sed -E 's/[ ]*(\?|M|N new file:|modified:)[ ]*/ /g' | sed -E 's/\s?-d[$]?//g' | xargs)
 
     if [ $NORMAL_REMOVE -eq 0 ]; then
         moveToTrash $UPDATE_FILES
     else
+        [[ "$UPDATE_FILES" =~ ^-[^\s]* ]] && UPDATE_FILES="./${UPDATE_FILES}"
         rm $UPDATE_FILES
     fi
 }
