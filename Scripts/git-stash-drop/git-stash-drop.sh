@@ -31,11 +31,14 @@ stashDrop() {
     ERROR=$(git stash show stash@{$NUM} 2>&1 > /dev/null)
     [ "$ERROR" != "" ] && errorMsg "${ERROR}\n${CLBL}stash@{${CLOG}${Bold}${NUM}${RSTF}${CLBL}}${CLRD} doesn't exist!" 22
 
-    FILES=$(git stash show stash@{$NUM} | sed -E "s/([+]+)/${CLGN}\1${RSTC}/g" | sed -E "s/([-]+)/${CLRD}\1${RSTC}/g")
+    COMMIT=$(git stash list | grep stash@{$NUM} | head -1 | awk -F: '{ print $3 }' | xargs)
+    echo " ${Bold}${CLOG}${NUM}${RSTC}${RSTF}${Dim}${CLGY} | ${RSTC}${RSTF}${CLBL}${COMMIT}${RSTC}"
+    echo ""
+    FILES=$(git stash show stash@{$NUM} | sed -E "s/([+]+)/${CLGN}\1${RSTC}/g" | sed -E "s/[ m]+([-]+)/${CLRD}\1${RSTC}/g" | sed -E "s/\((-)\)/\(${CLRD}\1${RSTC}\)/g" )
     echo $FILES
     echo ""
 
-    echo -n "Are you sure you want to drop stash ${CLOG}${Bold}${NUM}${RSTC}${RSTF}: ${Dim}${CLGY}(Y/n)${RSTC}${RSTF} "
+    echo -n "Are you sure you want to drop stash: ${Dim}${CLGY}(Y/n)${RSTC}${RSTF} "
     read ANSWER
 
     if [ -z $ANSWER ] || [ "$ANSWER" = "y" ] || [ "$ANSWER" = "Y" ]; then
