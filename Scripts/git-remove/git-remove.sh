@@ -62,6 +62,7 @@ gitRemove() {
                 NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
             fi
 
+            [[ "$ITEM" =~ ^-[^\s]* ]] && ITEM="./${ITEM}"
             mv $ITEM ~/.Trash/"${NEW_FILE}" 2>/dev/null
         done
         echo ""
