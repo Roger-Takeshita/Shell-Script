@@ -59,7 +59,13 @@ gitRemove() {
                 EXT="${ITEM##*.}"
                 FILE_NAME=${ITEM%.*}
                 FILENAME="${FILE_NAME##*/}"
-                NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
+                [ "$EXT" == "$FILE_NAME" ] && EXT=''
+
+                if [ "$EXT" != "" ]; then
+                  NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
+                else
+                  NEW_FILE="${FILENAME} $(date +%H-%M-%S)"
+                fi
             fi
 
             [[ "$ITEM" =~ ^-[^\s]* ]] && ITEM="./${ITEM}"

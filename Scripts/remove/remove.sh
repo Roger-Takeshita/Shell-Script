@@ -22,7 +22,13 @@ moveToTrash () {
             EXT="${FILE##*.}"
             FILE_NAME=${FILE%.*}
             FILENAME="${FILE_NAME##*/}"
-            NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
+            [ "$EXT" == "$FILE_NAME" ] && EXT=''
+
+            if [ "$EXT" != "" ]; then
+              NEW_FILE="${FILENAME} $(date +%H-%M-%S).${EXT}"
+            else
+              NEW_FILE="${FILENAME} $(date +%H-%M-%S)"
+            fi
         fi
 
         [[ "$FILE" =~ ^-[^\s]* ]] && FILE="./${FILE}"
