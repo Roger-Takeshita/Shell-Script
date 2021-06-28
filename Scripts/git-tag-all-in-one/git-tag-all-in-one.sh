@@ -13,173 +13,288 @@ CLRD=$'\e[38;5;1m'    # light red
 BGRSTC=$'\e[49m'      # bg reset color
 BGCGN=$'\e[48;5;34m'  # bg green
 BGCBL=$'\e[48;5;27m'  # bg blue
+BGCRD=$'\e[48;5;196m' # bg red
 RSTF=$'\e[0m'         # reset format
 UNDER=$'\e[4m'        # underline
 
-DIR=$(pwd)
+CURRENT_FOLDER=$(pwd)
 PACKAGE_JSON_FILENAME="package.json"
-TEACHERSEAT_FILENAME="teacherseat.json"
+TS_JSON_FILENAME="teacherseat.json"
+LIB_VERSION_FILENAME="version.rb"
 
-function notFoundFileMsg() {
-    FILE=$1
-    echo ""
-    echo "    ${CLBL}${FILE}${CLOG} not found.${RSTC}"
-    echo "    ${CLOG}Looks like you are trying to run the script outside of your project root path or ${CLBL}${FILE}${CLOG} doesn't exist.${RSTC}"
-    echo "    ${CLRD}Process aborted!${RSTC}"
-    echo ""
-    exit
+errorMsg() {
+  local FILE=$1
+  local MSG=$2
+  echo ""
+  echo "    ${CLBL}${FILE}${CLOG} not found.${RSTC}"
+  if [ "$MSG" != "" ]; then
+    echo "    ${MSG}"
+  fi
+  abortMsg "Process aborted!"
 }
 
-function checkIfFileExists() {
-    if [ -f "${DIR}/${PACKAGE_JSON_FILENAME}" ]; then
-        PACKAGE_JSON_VERSION=$(cat ${DIR}/${PACKAGE_JSON_FILENAME} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
+abortMsg() {
+  local MSG=$1
+
+  echo ""
+  echo "    ${BGCRD}${CWHT}${MSG}${RSTC}${BGRSTC}"
+  echo ""
+  exit 1
+}
+
+checkIfFileExists() {
+  local FOLDER=$1
+  local FILE=$2
+
+  if [ -f "${FOLDER}/${FILE}" ]; then
+    VERSION=$(cat ${FOLDER}/${FILE} | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs)
+
+    if [ "$FILE" == "$PACKAGE_JSON_FILENAME" ]; then
+      PACKAGE_JSON_VERSION=$VERSION
     else
-        notFoundFileMsg $PACKAGE_JSON_FILENAME
+      TS_JSON_VERSION=$VERSION
     fi
-
-    if [ -f "${DIR}/${TEACHERSEAT_FILENAME}" ]; then
-        RELEASE_TYPE=$(cat ${DIR}/${TEACHERSEAT_FILENAME} | grep type | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | xargs )
-        RELEASE_VERSION=$(grep '"version": [0-9]*$' ${DIR}/${TEACHERSEAT_FILENAME} | sed -e "s/\(\"version\":\) \([0-9]*$\)/\2/" | xargs)
-    else
-        # notFoundFileMsg $TEACHERSEAT_FILENAME
-        TEACHERSEAT_FILENAME=""
-    fi
+  fi
 }
 
-function splitVersion() {
-    if [[ $1 =~ ([0-9]+).([0-9]+).([0-9]+) ]]; then
-      MAJOR=${BASH_REMATCH[1]}
-      MINOR=${BASH_REMATCH[2]}
-      PATCH=${BASH_REMATCH[3]}
-    fi
-}
+printSummary() {
+  local FILE_NAME=$1
+  local PACKAGE_OLD_TAG=$2
+  local NEW_TAG=$3
+  local TS_OLD_TAG=$4
 
-function checkTagExists() {
-    local TAG=$(echo $1 | xargs)
-
-    if [ "$TAG" == "" ]; then
-        TAG=$PACKAGE_JSON_VERSION
-    fi
-
-    if git rev-parse $TAG >/dev/null 2>&1 ; then
-        echo ""
-        echo "    ${CLRD}Tag ${CLBL}${TAG}${CLRD} already exists${RSTC}"
-        echo ""
-        # TAGS=$(git tag | sed -e 's/\n/ /g' | tr '\r\n' ' ')
-        # echo "    ${CGY}Existing tags: ${TAGS}${RSTC}"
-
-        return 1
-    fi
-
-    return 0
-}
-
-function updateRelease() {
-    echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release type${RSTF}: ${CGY}(${RELEASE_TYPE})${RSTC} "
-    read NEW_RELEASE_TYPE
-
-    if [ "$NEW_RELEASE_TYPE" == "" ]; then
-        NEW_RELEASE_TYPE=$RELEASE_TYPE
-    fi
-
-    echo -n "Please enter ${CLBL}${TEACHERSEAT_FILENAME}${RSTC} ${UNDER}release version${RSTF}: ${CGY}(${RELEASE_VERSION})${RSTC} "
-    read NEW_RELEASE_VERSION
-
-    if [ "$NEW_RELEASE_VERSION" == "" ]; then
-        NEW_RELEASE_VERSION=$RELEASE_VERSION
-    fi
-}
-
-function printSummary() {
-    local OLD_TAG=$1
-    local NEW_TAG=$2
-
-    if [ "$OLD_TAG" != "$NEW_TAG" ]; then
-        echo ""
-        echo "    ${CLBL}PREVIOUS:${RSTC}"
-        echo "    ${CLBL}    Tag version:                       ${OLD_TAG}${RSTC}"
-        echo "    ${CLBL}    ${PACKAGE_JSON_FILENAME} version:              ${OLD_TAG}${RSTC}"
-        if [ "$TEACHERSEAT_FILENAME" != "" ]; then
-            echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release type:     ${RELEASE_TYPE}${RSTC}"
-            echo "    ${CLBL}    ${TEACHERSEAT_FILENAME} release version:  ${RELEASE_VERSION}${RSTC}"
-        fi
-    fi
-
+  if [ "$PACKAGE_OLD_TAG" != "$NEW_TAG" ]; then
     echo ""
-    echo "    ${CLGN}NEW:${RSTC}"
-    echo "    ${CLGN}    Tag version:                       ${NEW_TAG}${RSTC}"
-    echo "    ${CLGN}    ${PACKAGE_JSON_FILENAME} version:              ${NEW_TAG}${RSTC}"
-    if [ "$TEACHERSEAT_FILENAME" != "" ]; then
-        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release type:     ${NEW_RELEASE_TYPE}${RSTC}"
-        echo "    ${CLGN}    ${TEACHERSEAT_FILENAME} release version:  ${NEW_RELEASE_VERSION}${RSTC}"
-    fi
-    echo ""
-}
-
-function pushNewTag() {
-    local OLD_TAG=$1
-    local NEW_TAG=$2
-    splitVersion $NEW_TAG
-
-    echo -n "Are you sure you want to bump the ${UNDER}version${RSTF}? ${CGY}(y/n)${RSTC} "
-    read ANSWER
-    local CONFIRM=$(echo $ANSWER | tr [:upper:] [:lower:])
-
-    if [ "${CONFIRM}" == "" ] || [ "${CONFIRM}" == "y" ] || [ "${CONFIRM}" == "yes" ]; then
-        $(cat ${DIR}/${PACKAGE_JSON_FILENAME} | sed -e s/\"${OLD_TAG}\"/\"${NEW_TAG}\"/g > ${DIR}/NEW_${PACKAGE_JSON_FILENAME})
-        $(rm ${DIR}/${PACKAGE_JSON_FILENAME})
-        $(mv ${DIR}/NEW_${PACKAGE_JSON_FILENAME} ${DIR}/${PACKAGE_JSON_FILENAME})
-        if [ "$TEACHERSEAT_FILENAME" != "" ]; then
-            cat "${DIR}/${TEACHERSEAT_FILENAME}" | sed -e "s/\(\"major\":\) \([0-9]*\)/\1 ${MAJOR}/" | sed -e "s/\(\"minor\":\) \([0-9]*\)/\1 ${MINOR}/" | sed -e "s/\(\"patch\":\) \([0-9]*\)/\1 ${PATCH}/" | sed -e "s/\(\"type\":\) \(\"[a-zA-Z0-9-]*\"\)/\1 \"${NEW_RELEASE_TYPE}\"/" | sed -e "s/\(\"version\":\) \([0-9]*$\)/\1 ${NEW_RELEASE_VERSION}/" > "${DIR}/NEW_${TEACHERSEAT_FILENAME}"
-            $(rm ${DIR}/${TEACHERSEAT_FILENAME})
-            $(mv ${DIR}/NEW_${TEACHERSEAT_FILENAME} ${DIR}/${TEACHERSEAT_FILENAME})
-        fi
-        echo "${CGY}$(npm install)"
-        echo "${CGY}$(git add . ; git commit -m "bump tag to ${NEW_TAG}" ; git push)"
-        echo "${CGY}$(git tag ${NEW_TAG} ; git push origin --tags)${RSTC}"
-        echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${NEW_TAG}${RSTC}${BGRSTC}"
-        echo ""
+    echo "    ${CLBL}PREVIOUS:${RSTC}"
+    echo "    ${CLBL}    Local tag version:                 ${PACKAGE_OLD_TAG}${RSTC}"
+    if [ "$FILE_NAME" == "$PACKAGE_JSON_FILENAME" ]; then
+      echo "    ${CLBL}    ${FILE_NAME} version:              ${PACKAGE_OLD_TAG}${RSTC}"
     else
-        echo "    ${CLRD}Process aborted!"
-        echo ""
+      echo "    ${CLBL}    ${FILE_NAME} version:          ${PACKAGE_OLD_TAG}${RSTC}"
     fi
+    if [ "$TS_OLD_TAG" != "" ]; then
+      echo "    ${CLBL}    ${TS_JSON_FILENAME} version:          ${TS_OLD_TAG}${RSTC}"
+    fi
+  fi
+
+  echo ""
+  echo "    ${CLGN}NEW:${RSTC}"
+  echo "    ${CLGN}    Local tag version:                 ${NEW_TAG}${RSTC}"
+  if [ "$FILE_NAME" == "$PACKAGE_JSON_FILENAME" ]; then
+    echo "    ${CLGN}    ${FILE_NAME} version:              ${NEW_TAG}${RSTC}"
+  else
+    echo "    ${CLGN}    ${FILE_NAME} version:          ${NEW_TAG}${RSTC}"
+  fi
+  if [ "$TS_OLD_TAG" != "" ]; then
+    echo "    ${CLGN}    ${TS_JSON_FILENAME} version:          ${NEW_TAG}${RSTC}"
+  fi
+  echo ""
 }
 
-function tagLoop() {
-    local TAG_EXISTS=$1
+updateTeacherSeat() {
+  local NEW_TAG=$1
+  local FILE_PATH="${CURRENT_FOLDER}/${TS_JSON_FILENAME}"
+  local NEW_FILE_PATH="${CURRENT_FOLDER}/NEW_${TS_JSON_FILENAME}"
 
-    while [ $TAG_EXISTS -eq 1 ]; do
-        echo -n "Please enter ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_JSON_VERSION})${RSTC} "
-        read NEW_TAG_VERSION_AGAIN
-        checkTagExists $NEW_TAG_VERSION_AGAIN
-        TAG_EXISTS=$?
+  if [ -f $FILE_PATH ]; then
+    updateTeacherSeatLib $NEW_TAG
+
+    cat $FILE_PATH | sed -E "s/(\"version\":[ ]?\").*(\")/\1${NEW_TAG}\2/g" > $NEW_FILE_PATH
+    rm $FILE_PATH ; mv $NEW_FILE_PATH $FILE_PATH
+  else
+    errorMsg $TS_JSON_FILENAME "${CLRD}Looks like you are trying to run the script outside of your project root path or ${CLBL}${TS_JSON_FILENAME}${CLRD} doesn't exist.${RSTC}"
+  fi
+}
+
+updateTeacherSeatLib() {
+  local NEW_TAG=$1
+  LIB_FOLDER_NAME="engine_folder"
+
+  if [ -d "$CURRENT_FOLDER/lib" ]; then
+    for DIR in "$CURRENT_FOLDER/lib/"*; do
+      ENGINE_FOLDER=$(basename "$DIR")
+
+      if [ -d $DIR ] && [[ "$ENGINE_FOLDER" =~ ^(pa_|ts_).* ]]; then
+        LIB_FOLDER_NAME=$ENGINE_FOLDER
+      fi
     done
 
-    if [ "$NEW_TAG_VERSION_AGAIN" != "" ]; then
-        NEW_TAG_VERSION=$NEW_TAG_VERSION_AGAIN
+    local LIB_FOLDER="${CURRENT_FOLDER}/lib/${LIB_FOLDER_NAME}"
+
+    if [ -d $LIB_FOLDER ]; then
+      LIB_VERSION_FILE="${LIB_FOLDER}/${LIB_VERSION_FILENAME}"
+
+      if [ -f $LIB_VERSION_FILE ]; then
+        cat "${LIB_VERSION_FILE}" | sed -E "s/(VERSION[ ]?=[ ]?[\'\"]).*([\'\"])/\1${NEW_TAG}\2/g" > "${LIB_FOLDER}/NEW_${LIB_VERSION_FILENAME}"
+        rm "${LIB_FOLDER}/${LIB_VERSION_FILENAME}"
+        mv "${LIB_FOLDER}/NEW_${LIB_VERSION_FILENAME}" "${LIB_FOLDER}/${LIB_VERSION_FILENAME}"
+      else
+        errorMsg $LIB_VERSION_FILE
+      fi
     fi
+  fi
 }
 
-function init() {
-    splitVersion $PACKAGE_JSON_VERSION
+updateJson() {
+  local NEW_TAG=$1
+  local FILE_PATH="${CURRENT_FOLDER}/${PACKAGE_JSON_FILENAME}"
+  local NEW_FILE_PATH="${CURRENT_FOLDER}/NEW_${PACKAGE_JSON_FILENAME}"
 
-    echo -n "Please enter ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_JSON_VERSION})${RSTC} "
-    read NEW_TAG_VERSION
+  if [ -f $FILE_PATH ]; then
+    cat $FILE_PATH | sed -E "s/(\"version\":[ ]?\").*(\")/\1${NEW_TAG}\2/g" > $NEW_FILE_PATH
+    rm $FILE_PATH ; mv $NEW_FILE_PATH $FILE_PATH
+  else
+    errorMsg $PACKAGE_JSON_FILENAME "${CLRD}Looks like you are trying to run the script outside of your project root path or ${CLBL}${PACKAGE_JSON_FILENAME}${CLRD} doesn't exist.${RSTC}"
+  fi
+}
 
-    if [ "$NEW_TAG_VERSION" == "" ]; then
-        NEW_TAG_VERSION=$PACKAGE_JSON_VERSION
-    fi
+checkTagExists() {
+  local TAG=$(echo $1 | xargs)
+  local OPTIONAL_TAG=$2
 
-    checkTagExists $NEW_TAG_VERSION
+  if [ "$TAG" == "" ]; then
+    TAG=$OPTIONAL_TAG
+  fi
+
+  if git rev-parse $TAG >/dev/null 2>&1 ; then
+    echo ""
+    echo "    ${CLRD}Tag ${CLBL}${TAG}${CLRD} already exists${RSTC}"
+    echo ""
+
+    return 1
+  fi
+
+  return 0
+}
+
+checkTag() {
+  local TAG_EXISTS=$1
+  local FILE_NAME=$2
+  local TAG_VERSION=$3
+
+  while [ $TAG_EXISTS -eq 1 ]; do
+    echo -n "Please enter the ${CLBL}${FILE_NAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${TAG_VERSION})${RSTC} "
+    read NEW_TAG_VERSION_AGAIN
+    checkTagExists $NEW_TAG_VERSION_AGAIN $TAG_VERSION
     TAG_EXISTS=$?
+  done
 
-    tagLoop $TAG_EXISTS
-    if [ "$TEACHERSEAT_FILENAME" != "" ]; then
-        updateRelease
-    fi
-    printSummary $PACKAGE_JSON_VERSION $NEW_TAG_VERSION
-    pushNewTag $PACKAGE_JSON_VERSION $NEW_TAG_VERSION
+  if [ "$NEW_TAG_VERSION_AGAIN" != "" ]; then
+    NEW_TAG_VERSION=$NEW_TAG_VERSION_AGAIN
+  fi
 }
 
-checkIfFileExists
+packageJson() {
+  checkIfFileExists $CURRENT_FOLDER $PACKAGE_JSON_FILENAME
+  checkIfFileExists $CURRENT_FOLDER $TS_JSON_FILENAME
+
+  echo ""
+  echo -n "Please enter the ${CLBL}${PACKAGE_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${PACKAGE_JSON_VERSION})${RSTC} "
+  read NEW_TAG_VERSION
+
+  if [ "$NEW_TAG_VERSION" == "" ]; then
+    NEW_TAG_VERSION=$PACKAGE_JSON_VERSION
+  fi
+
+  checkTagExists $NEW_TAG_VERSION $PACKAGE_JSON_VERSION
+  TAG_EXISTS=$?
+
+  checkTag $TAG_EXISTS $PACKAGE_JSON_FILENAME $PACKAGE_JSON_VERSION
+  printSummary $PACKAGE_JSON_FILENAME $PACKAGE_JSON_VERSION $NEW_TAG_VERSION $TS_JSON_VERSION
+
+  echo -n "Are you sure you want to bump the ${UNDER}version${RSTF}? ${CGY}(Y/n)${RSTC} "
+  read ANSWER
+  local CONFIRM=$(echo $ANSWER | tr [:upper:] [:lower:])
+
+  if [ "${CONFIRM}" == "" ] || [ "${CONFIRM}" == "y" ] || [ "${CONFIRM}" == "yes" ]; then
+    updateJson $NEW_TAG_VERSION
+
+    echo "${CGY}$(npm install)"
+    echo "${CGY}$(git add . ; git commit -m "bump tag to ${NEW_TAG_VERSION}" ; git push)"
+    echo "${CGY}$(git tag ${NEW_TAG_VERSION} ; git push origin --tags)${RSTC}"
+    echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${NEW_TAG_VERSION}${RSTC}${BGRSTC}"
+    updatePullAssets
+    echo ""
+  else
+    abortMsg "Process aborted!"
+  fi
+}
+
+teacherseatJson() {
+  checkIfFileExists $CURRENT_FOLDER $TS_JSON_FILENAME
+  echo ""
+  echo -n "Please enter the ${CLBL}${TS_JSON_FILENAME}${RSTC} ${UNDER}version${RSTF}: ${CGY}(${TS_JSON_VERSION})${RSTC} "
+  read NEW_TAG_VERSION
+
+  if [ "$NEW_TAG_VERSION" == "" ]; then
+    NEW_TAG_VERSION=$TS_JSON_VERSION
+  fi
+
+  checkTagExists $NEW_TAG_VERSION $TS_JSON_VERSION
+  TAG_EXISTS=$?
+
+  checkTag $TAG_EXISTS $TS_JSON_FILENAME $TS_JSON_VERSION
+  printSummary $TS_JSON_FILENAME $TS_JSON_VERSION $NEW_TAG_VERSION
+
+  echo -n "Are you sure you want to bump the ${UNDER}version${RSTF}? ${CGY}(Y/n)${RSTC} "
+  read ANSWER
+  local CONFIRM=$(echo $ANSWER | tr [:upper:] [:lower:])
+
+  if [ "${CONFIRM}" == "" ] || [ "${CONFIRM}" == "y" ] || [ "${CONFIRM}" == "yes" ]; then
+    updateTeacherSeat $NEW_TAG_VERSION
+
+    echo "${CGY}$(bundle install)"
+    echo "${CGY}$(git add . ; git commit -m "bump tag to ${NEW_TAG_VERSION}" ; git push)"
+    echo "${CGY}$(git tag ${NEW_TAG_VERSION} ; git push origin --tags)${RSTC}"
+    echo "${BGCGN}${CWHT}Your tag has been bumped to${BGRSTC} ${BGCBL}${NEW_TAG_VERSION}${RSTC}${BGRSTC}"
+    updateGemfile
+    echo ""
+  else
+    abortMsg "Process aborted!"
+  fi
+}
+
+updateGemfile() {
+  if [ "$PROJECT_PATH" != "" ]; then
+    local ENGINE_NAME=$(basename "$CURRENT_FOLDER")
+    local FILE_PATH="${PROJECT_PATH}/Gemfile"
+    local NEW_FILE_PATH="${PROJECT_PATH}/NEW_Gemfile"
+    cat $FILE_PATH | sed -E "s/(gem '${ENGINE_NAME}'[ ]*,[ ]*(pa_attrs|ts_attrs)\(mode:[ ]*)(:path)/\1:git/g" |
+                     sed -E "s/('${ENGINE_NAME}'[ ]*,[ ]*tag:[ ]*').*(')/\1${NEW_TAG_VERSION}\2/g" > $NEW_FILE_PATH
+    rm $FILE_PATH ; mv $NEW_FILE_PATH $FILE_PATH
+    cd $PROJECT_PATH
+    echo "${CGY}$(bundle install)"
+  fi
+}
+
+updatePullAssets() {
+  local ENGINE_NAME=$(basename "$CURRENT_FOLDER")
+
+  if [[ "$ENGINE_NAME" =~ ^([a-zA-Z]+)_ui_(.*) ]]; then
+    local PART1=${BASH_REMATCH[1]}
+    local PART2=${BASH_REMATCH[2]}
+    local ASSET_NAME=$(echo $PART2 |  tr '[:lower:]' '[:upper:]' )
+    local FILE_PATH="${PROJECT_PATH}/aws/deployment/after_install/pull_${PART1}_assets.sh"
+    local NEW_FILE_PATH="${PROJECT_PATH}/aws/deployment/after_install/NEW_pull_${PART1}_assets.sh"
+
+    if [ -f "$FILE_PATH" ]; then
+      cat $FILE_PATH | sed -E "s/(${ASSET_NAME}=)(.*)/\1${NEW_TAG_VERSION}/g" > $NEW_FILE_PATH
+      rm $FILE_PATH ; mv $NEW_FILE_PATH $FILE_PATH
+      chmod u+x $FILE_PATH
+    else
+      errorMsg $FILE_PATH
+    fi
+  fi
+}
+
+init() {
+  git pull > /dev/null
+
+  if [ -f "${CURRENT_FOLDER}/${PACKAGE_JSON_FILENAME}" ]; then
+    packageJson
+  elif [ -f "${CURRENT_FOLDER}/${TS_JSON_FILENAME}" ]; then
+    teacherseatJson
+  fi
+}
+
 init
