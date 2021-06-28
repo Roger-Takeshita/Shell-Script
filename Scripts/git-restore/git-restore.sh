@@ -8,7 +8,8 @@ ARGS=$@
 if [ -z $ARGS ]; then
     git restore .
 else
-    ARGS_ARRARY=($(echo "$ARGS" | sed -E 's/[ ]*(M|D)[ ]*/ /g' | xargs))
+    ARGS_ARRARY=($(echo "$ARGS" | sed -E 's/[ ]*[ ](M|D)[ ][ ]*/ /g' | xargs))
+
     for ITEM in ${ARGS_ARRARY[*]}; do
         git restore $ITEM
     done
