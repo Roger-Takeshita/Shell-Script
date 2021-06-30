@@ -4,10 +4,10 @@
 # https://github.com/Roger-Takeshita/Shell-Script
 
 ARG=$1
+JIRA=$2
 
 if [ -z $ARG ]; then
-    BRANCH_NAME=$(git branch --show-current)
-    echo "${BRANCH_NAME}" | tr -d '\n'| pbcopy
+    git branch -a
 else
     if [ "$ARG" = "m" ]; then
         BRANCH="maintenance"
@@ -19,5 +19,5 @@ else
         exit 1
     fi
 
-    echo "git checkout -b ${BRANCH}/" | tr -d '\n' | pbcopy
+    echo "git checkout -b ${BRANCH}/${JIRA}-" | tr -d '\n' | pbcopy
 fi
